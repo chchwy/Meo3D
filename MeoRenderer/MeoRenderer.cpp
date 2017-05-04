@@ -2,6 +2,24 @@
 #include "stdafx.h"
 #include "MeoRenderer.h"
 
+#include <cassert>
+#include "MeoMath.h"
+
+
+Vector2U GetWindowSize(HWND hWnd)
+{
+	RECT rect;
+	if (GetWindowRect(hWnd, &rect))
+	{
+		int width = rect.right - rect.left;
+		int height = rect.bottom - rect.top;
+		return Vector2U(width, height);
+	}
+
+	assert( false );
+	return Vector2U(0, 0);
+}
+
 
 MeoRenderer::MeoRenderer()
 {
