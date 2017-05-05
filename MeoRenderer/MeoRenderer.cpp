@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include "MeoMath.h"
+#include "RenderSystem.h"
 
 
 Vector2U GetWindowSize(HWND hWnd)
@@ -32,6 +33,8 @@ MeoRenderer::~MeoRenderer()
 void MeoRenderer::Initialize(HWND hWnd)
 {
 	m_hWnd = hWnd;
+	m_spRenderSystem = std::make_unique<RenderSystem>();
+	m_spRenderSystem->Initialize( m_hWnd );
 }
 
 void MeoRenderer::Shutdown()

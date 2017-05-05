@@ -16,6 +16,8 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
-
+#include <cassert>
 
 // TODO: reference additional headers your program requires here
+#include <dxgi.h>
+#include <d3d11.h>

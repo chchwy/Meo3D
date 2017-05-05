@@ -1,6 +1,10 @@
 #pragma once
 
 #include "resource.h"
+#include <memory>
+
+class RenderSystem;
+
 
 class MeoRenderer
 {
@@ -15,4 +19,5 @@ public:
 
 private:
 	HWND m_hWnd = 0;
+	std::unique_ptr< RenderSystem > m_spRenderSystem;
 };
