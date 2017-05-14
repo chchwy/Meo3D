@@ -12,11 +12,13 @@
 #include <windows.h>
 
 // C RunTime Header Files
-#include <stdlib.h>
+#include <cstdlib>
 #include <malloc.h>
-#include <memory.h>
+#include <memory>
 #include <tchar.h>
 #include <cassert>
+#include <cstdint>
+#include <cstring>
 
 // TODO: reference additional headers your program requires here
 #include <dxgi.h>

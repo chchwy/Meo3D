@@ -33,8 +33,10 @@ MeoRenderer::~MeoRenderer()
 void MeoRenderer::Initialize(HWND hWnd)
 {
 	m_hWnd = hWnd;
+
+	Vector2U screenSize = GetWindowSize(hWnd);
 	m_spRenderSystem = std::make_unique<RenderSystem>();
-	m_spRenderSystem->Initialize( m_hWnd );
+	m_spRenderSystem->Initialize( m_hWnd, screenSize.x, screenSize.y );
 }
 
 void MeoRenderer::Shutdown()
