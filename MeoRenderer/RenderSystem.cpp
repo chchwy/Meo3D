@@ -28,6 +28,14 @@ bool RenderSystem::Initialize( HWND hWnd, uint32_t uWidth, uint32_t uHeight )
 	bOK = InitBackBuffer();
 	assert(bOK);
 
+	bOK = InitDepthStencilBuffer();
+	assert(bOK);
+
+	m_pContext->OMSetRenderTargets(1, &m_pRenderTarget, m_pDepthStencilView);
+
+	bOK = InitRasterizerState();
+	assert(bOK);
+
 	return bOK;
 }
 
@@ -100,13 +108,8 @@ bool RenderSystem::InitBackBuffer()
 bool RenderSystem::InitDepthStencilBuffer()
 {
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
-	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-
-	// Initialize the description of the depth buffer.
 	std::memset(&depthBufferDesc, 0, sizeof(depthBufferDesc));
 
-	// Set up the description of the depth buffer.
 	depthBufferDesc.Width = m_uWidth;
 	depthBufferDesc.Height = m_uHeight;
 	depthBufferDesc.MipLevels = 1;
@@ -126,6 +129,7 @@ bool RenderSystem::InitDepthStencilBuffer()
 	}
 
 	// Initialize the description of the stencil state.
+	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 	std::memset(&depthStencilDesc, 0, sizeof(depthStencilDesc));
 
 	// Set up the description of the stencil state.
@@ -150,8 +154,45 @@ bool RenderSystem::InitDepthStencilBuffer()
 	depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 	// Create the depth stencil state.
-	hr = m_pDevice->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
-	if (FAILED(result))
+	hr = m_pDevice->CreateDepthStencilState(&depthStencilDesc, &m_pDepthStencilState);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+	m_pContext->OMSetDepthStencilState(m_pDepthStencilState, 1);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+	std::memset(&depthStencilViewDesc, 0, sizeof(depthStencilViewDesc));
+
+	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	depthStencilViewDesc.Texture2D.MipSlice = 0;
+
+	hr = m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer, &depthStencilViewDesc, &m_pDepthStencilView);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool RenderSystem::InitRasterizerState()
+{
+	D3D11_RASTERIZER_DESC rasterDesc;
+	rasterDesc.AntialiasedLineEnable = false;
+	rasterDesc.CullMode = D3D11_CULL_BACK;
+	rasterDesc.DepthBias = 0.1;
+	rasterDesc.DepthBiasClamp = 1.0f;
+	rasterDesc.DepthClipEnable = true;
+	rasterDesc.FillMode = D3D11_FILL_SOLID;
+	rasterDesc.FrontCounterClockwise = false;
+	rasterDesc.MultisampleEnable = false;
+	rasterDesc.ScissorEnable = false;
+	rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+	HRESULT hr = m_pDevice->CreateRasterizerState(&rasterDesc, &m_pRasterizerState);
+	if (FAILED(hr))
 	{
 		return false;
 	}

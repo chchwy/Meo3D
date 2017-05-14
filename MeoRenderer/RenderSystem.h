@@ -20,6 +20,7 @@ private:
 	bool InitDeviceAndSwapChain();
 	bool InitBackBuffer();
 	bool InitDepthStencilBuffer();
+	bool InitRasterizerState();
 
 private:
 	HWND m_hWnd = 0;
@@ -34,5 +35,9 @@ private:
 	ID3D11RenderTargetView* m_pRenderTarget = nullptr;
 
 	ID3D11Texture2D* m_pDepthStencilBuffer = nullptr;
+	ID3D11DepthStencilState* m_pDepthStencilState = nullptr;
+	ID3D11DepthStencilView* m_pDepthStencilView = nullptr;
+
+	ID3D11RasterizerState* m_pRasterizerState = nullptr;
 };
 
