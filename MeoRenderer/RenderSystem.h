@@ -2,8 +2,9 @@
 
 #include "stdafx.h"
 
-class MeoPipelineStateObject;
 
+class MeoPipelineStateObject;
+class MeoSimpleMesh;
 
 class RenderSystem
 {
@@ -18,7 +19,7 @@ public:
 	void Draw();
 
 private:
-	// D3D 11 specific initialization
+	// D3D 11 initialization
 	bool InitDeviceAndSwapChain();
 	bool InitBackBuffer();
 	bool InitDepthStencilBuffer();
@@ -44,5 +45,7 @@ private:
 	D3D11_VIEWPORT m_viewPort;
 
 	MeoPipelineStateObject* m_pPso = nullptr;
+
+	MeoSimpleMesh* m_pMesh = nullptr;
 };
 

@@ -1,9 +1,13 @@
 #include "stdafx.h"
 #include "RenderSystem.h"
+
 #include "MeoPipelineStateObject.h"
+#include "MeoShader.h"
+#include "MeoSimpleMesh.h"
 
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "D3DCompiler.lib")
 
 
 RenderSystem::RenderSystem()
@@ -47,20 +51,43 @@ bool RenderSystem::Initialize( HWND hWnd, uint32_t uWidth, uint32_t uHeight )
 	bOK = InitMainPso();
 	assert(bOK);
 
+	m_pMesh = new MeoSimpleMesh;
+	m_pMesh->Initialize(m_pDevice);
+
 	return bOK;
 }
 
 void RenderSystem::Shutdown()
 {
+	m_pPso->Release();
+	delete m_pPso;
+
+	m_pDepthStencilView->Release();
+	m_pDepthStencilBuffer->Release();
+	m_pRenderTarget->Release();
+	m_pContext->Release();
+	m_pDevice->Release();
+	m_pSwapChain->Release();
 }
 
 void RenderSystem::Update()
 {
-
 }
 
 void RenderSystem::Draw()
 {
+	float clearColor[4];
+	clearColor[0] = 0.f;
+	clearColor[1] = 0.f;
+	clearColor[2] = 0.f;
+	clearColor[3] = 1.f;
+	m_pContext->ClearRenderTargetView(m_pRenderTarget, clearColor);
+	m_pContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+	SetPso(m_pPso);
+
+	m_pMesh->Render(m_pContext);
+
 	m_pSwapChain->Present(0, 0);
 }
 
@@ -165,10 +192,23 @@ bool RenderSystem::InitMainPso()
 {
 	m_pPso = new MeoPipelineStateObject( m_pDevice, m_pContext );
 	m_pPso->CreateDepthStencilState();
+	m_pPso->CreateRasterizerState();
+
+	MeoShader* pShader = new MeoShader(m_pDevice, m_pContext);
+	pShader->CreateVertexShader(L"Shaders/ColorShader.hlsl");
+	pShader->CreatePixelShader(L"Shaders/ColorShader.hlsl");
+
+	m_pPso->pShaders = pShader;
+
 	return true;
 }
 
 bool RenderSystem::SetPso(MeoPipelineStateObject* pPso)
 {
+	m_pContext->IASetInputLayout(pPso->pShaders->GetInputLayout());
+	m_pContext->VSSetShader(pPso->pShaders->GetVertexShader(), NULL, 0);
+	m_pContext->PSSetShader(pPso->pShaders->GetPixelShader(), NULL, 0);
+	m_pContext->OMSetDepthStencilState( pPso->pDepthStencilState, 0);
+	m_pContext->RSSetState(pPso->pRasterizerState);
 	return true;
 }

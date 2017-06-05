@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MeoPipelineStateObject.h"
+#include "MeoShader.h"
 
 
 MeoPipelineStateObject::MeoPipelineStateObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -11,6 +12,15 @@ MeoPipelineStateObject::MeoPipelineStateObject(ID3D11Device* pDevice, ID3D11Devi
 
 MeoPipelineStateObject::~MeoPipelineStateObject()
 {
+}
+
+void MeoPipelineStateObject::Release()
+{
+	pDepthStencilState->Release();
+	pDepthStencilState = nullptr;
+
+	pRasterizerState->Release();
+	pRasterizerState = nullptr;
 }
 
 bool MeoPipelineStateObject::CreateDepthStencilState()

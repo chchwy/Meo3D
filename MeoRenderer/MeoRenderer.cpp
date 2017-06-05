@@ -3,7 +3,6 @@
 #include "MeoRenderer.h"
 
 #include <cassert>
-#include "MeoMath.h"
 #include "RenderSystem.h"
 
 
