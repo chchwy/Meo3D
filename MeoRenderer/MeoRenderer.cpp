@@ -41,10 +41,16 @@ void MeoRenderer::Initialize(HWND hWnd)
 
 void MeoRenderer::Shutdown()
 {
+	m_spRenderSystem->Shutdown();
 }
 
-void MeoRenderer::Frame()
+void MeoRenderer::UpdateScene()
 {
+	m_spRenderSystem->Update();
+}
 
+void MeoRenderer::DrawScene()
+{
+	m_spRenderSystem->Draw();
 }
 

@@ -67,7 +67,8 @@ int APIENTRY wWinMain
 			bQuit = true;
 		}
 
-		spMeoRenderer->Frame();
+		spMeoRenderer->UpdateScene();
+		spMeoRenderer->DrawScene();
     }
 
 	spMeoRenderer->Shutdown();

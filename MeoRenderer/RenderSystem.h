@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 
+class MeoPipelineStateObject;
 
 
 class RenderSystem
@@ -13,14 +14,17 @@ public:
 	bool Initialize(HWND hWnd, uint32_t uWidth, uint32_t uHeight);
 	void Shutdown();
 
-	void Frame();
+	void Update();
+	void Draw();
 
 private:
 	// D3D 11 specific initialization
 	bool InitDeviceAndSwapChain();
 	bool InitBackBuffer();
 	bool InitDepthStencilBuffer();
-	bool InitRasterizerState();
+
+	bool InitMainPso();
+	bool SetPso(MeoPipelineStateObject* pPso);
 
 private:
 	HWND m_hWnd = 0;
@@ -35,9 +39,10 @@ private:
 	ID3D11RenderTargetView* m_pRenderTarget = nullptr;
 
 	ID3D11Texture2D* m_pDepthStencilBuffer = nullptr;
-	ID3D11DepthStencilState* m_pDepthStencilState = nullptr;
 	ID3D11DepthStencilView* m_pDepthStencilView = nullptr;
 
-	ID3D11RasterizerState* m_pRasterizerState = nullptr;
+	D3D11_VIEWPORT m_viewPort;
+
+	MeoPipelineStateObject* m_pPso = nullptr;
 };
 

@@ -15,7 +15,8 @@ public:
 	void Initialize(HWND hWnd);
 	void Shutdown();
 
-	void Frame();
+	void UpdateScene();
+	void DrawScene();
 
 private:
 	HWND m_hWnd = 0;

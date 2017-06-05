@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "RenderSystem.h"
+#include "MeoPipelineStateObject.h"
 
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d11.lib")
@@ -32,8 +33,18 @@ bool RenderSystem::Initialize( HWND hWnd, uint32_t uWidth, uint32_t uHeight )
 	assert(bOK);
 
 	m_pContext->OMSetRenderTargets(1, &m_pRenderTarget, m_pDepthStencilView);
+	
+	D3D11_VIEWPORT viewport;
+	// Setup the viewport for rendering.
+	viewport.Width = (float)m_uWidth;
+	viewport.Height = (float)m_uHeight;
+	viewport.MinDepth = 0.f;
+	viewport.MaxDepth = 1.f;
+	viewport.TopLeftX = 0.f;
+	viewport.TopLeftY = 0.f;
+	m_pContext->RSSetViewports(1, &viewport);
 
-	bOK = InitRasterizerState();
+	bOK = InitMainPso();
 	assert(bOK);
 
 	return bOK;
@@ -43,8 +54,14 @@ void RenderSystem::Shutdown()
 {
 }
 
-void RenderSystem::Frame()
+void RenderSystem::Update()
 {
+
+}
+
+void RenderSystem::Draw()
+{
+	m_pSwapChain->Present(0, 0);
 }
 
 bool RenderSystem::InitDeviceAndSwapChain()
@@ -128,39 +145,6 @@ bool RenderSystem::InitDepthStencilBuffer()
 		return false;
 	}
 
-	// Initialize the description of the stencil state.
-	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-	std::memset(&depthStencilDesc, 0, sizeof(depthStencilDesc));
-
-	// Set up the description of the stencil state.
-	depthStencilDesc.DepthEnable = true;
-	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-
-	depthStencilDesc.StencilEnable = true;
-	depthStencilDesc.StencilReadMask = 0xFF;
-	depthStencilDesc.StencilWriteMask = 0xFF;
-
-	// Stencil front face
-	depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-	depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-	// Stencil back face
-	depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-	depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-	// Create the depth stencil state.
-	hr = m_pDevice->CreateDepthStencilState(&depthStencilDesc, &m_pDepthStencilState);
-	if (FAILED(hr))
-	{
-		return false;
-	}
-	m_pContext->OMSetDepthStencilState(m_pDepthStencilState, 1);
-
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
 	std::memset(&depthStencilViewDesc, 0, sizeof(depthStencilViewDesc));
 
@@ -177,25 +161,14 @@ bool RenderSystem::InitDepthStencilBuffer()
 	return true;
 }
 
-bool RenderSystem::InitRasterizerState()
+bool RenderSystem::InitMainPso()
 {
-	D3D11_RASTERIZER_DESC rasterDesc;
-	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_BACK;
-	rasterDesc.DepthBias = 0.1;
-	rasterDesc.DepthBiasClamp = 1.0f;
-	rasterDesc.DepthClipEnable = true;
-	rasterDesc.FillMode = D3D11_FILL_SOLID;
-	rasterDesc.FrontCounterClockwise = false;
-	rasterDesc.MultisampleEnable = false;
-	rasterDesc.ScissorEnable = false;
-	rasterDesc.SlopeScaledDepthBias = 0.0f;
+	m_pPso = new MeoPipelineStateObject( m_pDevice, m_pContext );
+	m_pPso->CreateDepthStencilState();
+	return true;
+}
 
-	HRESULT hr = m_pDevice->CreateRasterizerState(&rasterDesc, &m_pRasterizerState);
-	if (FAILED(hr))
-	{
-		return false;
-	}
-
+bool RenderSystem::SetPso(MeoPipelineStateObject* pPso)
+{
 	return true;
 }
