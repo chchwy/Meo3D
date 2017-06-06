@@ -84,7 +84,7 @@ void RenderSystem::Draw()
 	m_pContext->ClearRenderTargetView(m_pRenderTarget, clearColor);
 	m_pContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-	SetPso(m_pPso);
+	SetPipelineStateObject(m_pPso);
 
 	m_pMesh->Render(m_pContext);
 
@@ -151,35 +151,35 @@ bool RenderSystem::InitBackBuffer()
 
 bool RenderSystem::InitDepthStencilBuffer()
 {
-	D3D11_TEXTURE2D_DESC depthBufferDesc;
-	std::memset(&depthBufferDesc, 0, sizeof(depthBufferDesc));
+	D3D11_TEXTURE2D_DESC desc1;
+	std::memset(&desc1, 0, sizeof(desc1));
 
-	depthBufferDesc.Width = m_uWidth;
-	depthBufferDesc.Height = m_uHeight;
-	depthBufferDesc.MipLevels = 1;
-	depthBufferDesc.ArraySize = 1;
-	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthBufferDesc.SampleDesc.Count = 1;
-	depthBufferDesc.SampleDesc.Quality = 0;
-	depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	depthBufferDesc.CPUAccessFlags = 0;
-	depthBufferDesc.MiscFlags = 0;
+	desc1.Width = m_uWidth;
+	desc1.Height = m_uHeight;
+	desc1.MipLevels = 1;
+	desc1.ArraySize = 1;
+	desc1.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	desc1.SampleDesc.Count = 1;
+	desc1.SampleDesc.Quality = 0;
+	desc1.Usage = D3D11_USAGE_DEFAULT;
+	desc1.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	desc1.CPUAccessFlags = 0;
+	desc1.MiscFlags = 0;
 
-	HRESULT hr = m_pDevice->CreateTexture2D(&depthBufferDesc, nullptr, &m_pDepthStencilBuffer);
+	HRESULT hr = m_pDevice->CreateTexture2D(&desc1, nullptr, &m_pDepthStencilBuffer);
 	if (FAILED(hr))
 	{
 		return false;
 	}
 
-	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-	std::memset(&depthStencilViewDesc, 0, sizeof(depthStencilViewDesc));
+	D3D11_DEPTH_STENCIL_VIEW_DESC desc2;
+	std::memset(&desc2, 0, sizeof(desc2));
 
-	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	depthStencilViewDesc.Texture2D.MipSlice = 0;
+	desc2.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	desc2.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	desc2.Texture2D.MipSlice = 0;
 
-	hr = m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer, &depthStencilViewDesc, &m_pDepthStencilView);
+	hr = m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer, &desc2, &m_pDepthStencilView);
 	if (FAILED(hr))
 	{
 		return false;
@@ -204,7 +204,7 @@ bool RenderSystem::InitMainPso()
 	return true;
 }
 
-bool RenderSystem::SetPso(MeoPipelineStateObject* pPso)
+bool RenderSystem::SetPipelineStateObject(MeoPipelineStateObject* pPso)
 {
 	m_pContext->IASetInputLayout(pPso->pShaders->GetInputLayout());
 	m_pContext->VSSetShader(pPso->pShaders->GetVertexShader(), NULL, 0);

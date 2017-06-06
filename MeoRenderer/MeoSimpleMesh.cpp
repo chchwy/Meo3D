@@ -15,13 +15,13 @@ MeoSimpleMesh::~MeoSimpleMesh()
 bool MeoSimpleMesh::Initialize(ID3D11Device* pDevice)
 {
 	m_rawMeshData.resize(3);
-	m_rawMeshData[0].pos = { -0.5, 0, 0 };
+	m_rawMeshData[0].pos = { -1, -1, 0 };
 	m_rawMeshData[0].color = { 1, 0, 0, 0.5 };
 
-	m_rawMeshData[1].pos = { 0.5, 0, 0 };
+	m_rawMeshData[1].pos = { 1, -1, 0 };
 	m_rawMeshData[1].color = { 1, 0, 0, 0.5 };
 
-	m_rawMeshData[2].pos = { 0, 1, 0 };
+	m_rawMeshData[2].pos = { -1, 1, 0 };
 	m_rawMeshData[2].color = { 1, 0, 0, 0.5 };
 
 	m_rawIndexData.resize(3);

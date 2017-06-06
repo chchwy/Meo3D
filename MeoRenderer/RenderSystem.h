@@ -25,7 +25,7 @@ private:
 	bool InitDepthStencilBuffer();
 
 	bool InitMainPso();
-	bool SetPso(MeoPipelineStateObject* pPso);
+	bool SetPipelineStateObject(MeoPipelineStateObject* pPso);
 
 private:
 	HWND m_hWnd = 0;
