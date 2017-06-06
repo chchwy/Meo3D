@@ -123,7 +123,7 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow)
 							 szTitle,
 							 WS_OVERLAPPEDWINDOW,
 							 CW_USEDEFAULT, 0,   // x,y
-							 CW_USEDEFAULT, 0,   // width, height
+							 800, 600, //CW_USEDEFAULT, 0,   // width, height
 							 nullptr,            // parent
 							 nullptr,            // menu
 							 hInstance,
