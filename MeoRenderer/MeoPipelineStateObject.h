@@ -15,6 +15,7 @@ public:
 
 	bool CreateDepthStencilState();
 	bool CreateRasterizerState();
+	bool CreateBlendState();
 
 	ID3D11DepthStencilState* pDepthStencilState = nullptr;
 	ID3D11RasterizerState* pRasterizerState = nullptr;

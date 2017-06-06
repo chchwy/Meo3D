@@ -6,7 +6,7 @@
 
 struct Vertex
 {
-	Float4 pos;
+	Float3 pos;
 	Float4 color;
 };
 

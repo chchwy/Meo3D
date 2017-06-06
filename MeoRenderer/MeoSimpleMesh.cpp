@@ -16,18 +16,18 @@ bool MeoSimpleMesh::Initialize(ID3D11Device* pDevice)
 {
 	m_rawMeshData.resize(3);
 	m_rawMeshData[0].pos = { -0.5, 0, 0 };
-	m_rawMeshData[0].color = { 1, 0, 0, 1 };
+	m_rawMeshData[0].color = { 1, 1, 1, 1 };
 
 	m_rawMeshData[1].pos = { 0.5, 0, 0 };
-	m_rawMeshData[1].color = { 0, 1, 0, 1 };
+	m_rawMeshData[1].color = { 1, 1, 1, 1 };
 
 	m_rawMeshData[2].pos = { 0, 1, 0 };
-	m_rawMeshData[2].color = { 0, 0, 1, 1 };
+	m_rawMeshData[2].color = { 1, 1, 1, 1 };
 
 	m_rawIndexData.resize(3);
-	m_rawIndexData[0] = 0;
+	m_rawIndexData[0] = 2;
 	m_rawIndexData[1] = 1;
-	m_rawIndexData[2] = 2;
+	m_rawIndexData[2] = 0;
 
 	return CreateVertexBuffer(pDevice);
 }
@@ -73,7 +73,7 @@ bool MeoSimpleMesh::CreateVertexBuffer(ID3D11Device* pDevice)
 	D3D11_BUFFER_DESC iDesc; // index buffer
 							 // Set up the description of the static index buffer.
 	iDesc.Usage = D3D11_USAGE_DEFAULT;
-	iDesc.ByteWidth = sizeof(unsigned long) * 3;
+	iDesc.ByteWidth = sizeof(UINT) * 3;
 	iDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	iDesc.CPUAccessFlags = 0;
 	iDesc.MiscFlags = 0;

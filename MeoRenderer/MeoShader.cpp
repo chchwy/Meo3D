@@ -63,7 +63,7 @@ bool MeoShader::CreateVertexShader(std::wstring sFilePath)
 	inputLayout[1].SemanticIndex = 0;
 	inputLayout[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	inputLayout[1].InputSlot = 0;
-	inputLayout[1].AlignedByteOffset = 0;
+	inputLayout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 	inputLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	inputLayout[1].InstanceDataStepRate = 0;
 
