@@ -193,6 +193,7 @@ bool RenderSystem::InitMainPso()
 	m_pPso = new MeoPipelineStateObject( m_pDevice, m_pContext );
 	m_pPso->CreateDepthStencilState();
 	m_pPso->CreateRasterizerState();
+	m_pPso->CreateBlendState();
 
 	MeoShader* pShader = new MeoShader(m_pDevice, m_pContext);
 	pShader->CreateVertexShader(L"Shaders/ColorShader.hlsl");
@@ -208,7 +209,8 @@ bool RenderSystem::SetPso(MeoPipelineStateObject* pPso)
 	m_pContext->IASetInputLayout(pPso->pShaders->GetInputLayout());
 	m_pContext->VSSetShader(pPso->pShaders->GetVertexShader(), NULL, 0);
 	m_pContext->PSSetShader(pPso->pShaders->GetPixelShader(), NULL, 0);
-	m_pContext->OMSetDepthStencilState( pPso->pDepthStencilState, 0);
 	m_pContext->RSSetState(pPso->pRasterizerState);
+	m_pContext->OMSetBlendState(pPso->pBlenderState, 0, 0xffffffff);
+	m_pContext->OMSetDepthStencilState(pPso->pDepthStencilState, 0);
 	return true;
 }

@@ -63,16 +63,18 @@ bool MeoPipelineStateObject::CreateDepthStencilState()
 bool MeoPipelineStateObject::CreateRasterizerState()
 {
 	D3D11_RASTERIZER_DESC rasterDesc;
-	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_NONE;
-	rasterDesc.DepthBias = 0.1;
-	rasterDesc.DepthBiasClamp = 1.0f;
-	rasterDesc.DepthClipEnable = true;
 	rasterDesc.FillMode = D3D11_FILL_SOLID;
+	rasterDesc.CullMode = D3D11_CULL_NONE;
 	rasterDesc.FrontCounterClockwise = false;
-	rasterDesc.MultisampleEnable = false;
+
+	rasterDesc.DepthBias = 1;
+	rasterDesc.DepthBiasClamp = 1.0f;
+	rasterDesc.SlopeScaledDepthBias = 1.0f;
+	rasterDesc.DepthClipEnable = true;
+	
 	rasterDesc.ScissorEnable = false;
-	rasterDesc.SlopeScaledDepthBias = 0.0f;
+	rasterDesc.MultisampleEnable = false;
+	rasterDesc.AntialiasedLineEnable = false;
 
 	HRESULT hr = m_pDevice->CreateRasterizerState(&rasterDesc, &pRasterizerState);
 	if (FAILED(hr))
@@ -86,4 +88,22 @@ bool MeoPipelineStateObject::CreateRasterizerState()
 bool MeoPipelineStateObject::CreateBlendState()
 {
 	D3D11_BLEND_DESC bDesc;
+	bDesc.AlphaToCoverageEnable = false;
+	bDesc.IndependentBlendEnable = false; // use rendertarget[0] state only
+
+	bDesc.RenderTarget[0].BlendEnable = true;
+	bDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	bDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	bDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	bDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+	bDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_DEST_ALPHA;
+	bDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	bDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	HRESULT hr = m_pDevice->CreateBlendState(&bDesc, &pBlenderState);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+	return true;
 }

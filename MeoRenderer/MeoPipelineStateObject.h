@@ -19,6 +19,7 @@ public:
 
 	ID3D11DepthStencilState* pDepthStencilState = nullptr;
 	ID3D11RasterizerState* pRasterizerState = nullptr;
+	ID3D11BlendState* pBlenderState = nullptr;
 
 	MeoShader* pShaders = nullptr;
 
