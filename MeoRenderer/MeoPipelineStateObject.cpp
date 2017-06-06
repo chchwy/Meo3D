@@ -56,7 +56,6 @@ bool MeoPipelineStateObject::CreateDepthStencilState()
 	{
 		return false;
 	}
-	//m_pContext->OMSetDepthStencilState(m_pDepthStencilState, 1);
 	return false;
 }
 
@@ -81,7 +80,6 @@ bool MeoPipelineStateObject::CreateRasterizerState()
 	{
 		return false;
 	}
-
 	return true;
 }
 

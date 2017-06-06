@@ -10,6 +10,18 @@ struct Vector2U
 	Vector2U(uint32_t _x, uint32_t _y) { x = _x; y = _y; }
 };
 
+struct Float2
+{
+	float x = 0.f;
+	float y = 0.f;
+	Float2() {}
+	Float2(float _x, float _y)
+	{
+		x = _x;
+		y = _y;
+	}
+};
+
 struct Float3
 {
 	float x = 0.f;

@@ -8,6 +8,7 @@ struct Vertex
 {
 	Float3 pos;
 	Float4 color;
+	Float2 uv;
 };
 
 class MeoSimpleMesh
@@ -23,6 +24,8 @@ public:
 
 private:
 	bool CreateVertexBuffer(ID3D11Device* pDevice);
+
+	bool m_bInitialized = false;
 
 	std::vector<Vertex> m_rawMeshData;
 	std::vector<UINT> m_rawIndexData;

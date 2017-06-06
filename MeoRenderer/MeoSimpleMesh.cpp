@@ -16,13 +16,13 @@ bool MeoSimpleMesh::Initialize(ID3D11Device* pDevice)
 {
 	m_rawMeshData.resize(3);
 	m_rawMeshData[0].pos = { -1, -1, 0 };
-	m_rawMeshData[0].color = { 1, 0, 0, 0.5 };
+	m_rawMeshData[0].color = { 1, 0, 0, 1 };
 
 	m_rawMeshData[1].pos = { 1, -1, 0 };
-	m_rawMeshData[1].color = { 1, 0, 0, 0.5 };
+	m_rawMeshData[1].color = { 0, 1, 0, 1 };
 
 	m_rawMeshData[2].pos = { -1, 1, 0 };
-	m_rawMeshData[2].color = { 1, 0, 0, 0.5 };
+	m_rawMeshData[2].color = { 0, 0, 1, 1 };
 
 	m_rawIndexData.resize(3);
 	m_rawIndexData[0] = 2;
@@ -46,7 +46,7 @@ void MeoSimpleMesh::Render(ID3D11DeviceContext* pContext)
 	pContext->IASetIndexBuffer(m_pIndexedBuffer, DXGI_FORMAT_R32_UINT, 0);
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	pContext->DrawIndexed(3, 0, 0);
+	pContext->DrawIndexed(m_uIndexCount, 0, 0);
 }
 
 bool MeoSimpleMesh::CreateVertexBuffer(ID3D11Device* pDevice)
