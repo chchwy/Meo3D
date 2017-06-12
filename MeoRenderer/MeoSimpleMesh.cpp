@@ -24,10 +24,14 @@ bool MeoSimpleMesh::Initialize(ID3D11Device* pDevice)
 	m_rawMeshData[2].pos = { -1, 1, 0 };
 	m_rawMeshData[2].color = { 0, 0, 1, 1 };
 
+	m_uVertexCount = m_rawMeshData.size();
+
 	m_rawIndexData.resize(3);
 	m_rawIndexData[0] = 2;
 	m_rawIndexData[1] = 1;
 	m_rawIndexData[2] = 0;
+
+	m_uIndexCount = m_rawIndexData.size();
 
 	return CreateVertexBuffer(pDevice);
 }
