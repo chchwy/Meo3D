@@ -3,9 +3,10 @@
 
 
 #include "stdafx.h"
+
 #include <memory>
 #include "Meo3D.h"
-
+#include "resource.h"
 
 #define MAX_LOADSTRING 100
 

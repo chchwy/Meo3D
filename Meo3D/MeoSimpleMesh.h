@@ -1,10 +1,9 @@
 #pragma once
 
 #include <vector>
-#include "MeoMath.h"
 
 
-struct Vertex
+struct SimpleVertex
 {
 	Float3 pos;
 	Float4 color;
@@ -27,7 +26,7 @@ private:
 
 	bool m_bInitialized = false;
 
-	std::vector<Vertex> m_rawMeshData;
+	std::vector<SimpleVertex> m_rawMeshData;
 	std::vector<UINT> m_rawIndexData;
 
 	ID3D11Buffer* m_pVertexBuffer = nullptr;

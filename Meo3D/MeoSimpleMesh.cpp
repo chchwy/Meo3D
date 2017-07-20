@@ -8,8 +8,7 @@ MeoSimpleMesh::MeoSimpleMesh()
 
 MeoSimpleMesh::~MeoSimpleMesh()
 {
-	SAFE_RELEASE(m_pVertexBuffer);
-	SAFE_RELEASE(m_pIndexedBuffer);
+    Shutdown();
 }
 
 bool MeoSimpleMesh::Initialize(ID3D11Device* pDevice)
@@ -44,7 +43,7 @@ void MeoSimpleMesh::Shutdown()
 
 void MeoSimpleMesh::Render(ID3D11DeviceContext* pContext)
 {
-	UINT stride = sizeof(Vertex);
+	UINT stride = sizeof(SimpleVertex);
 	UINT offset = 0;
 	pContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset );
 	pContext->IASetIndexBuffer(m_pIndexedBuffer, DXGI_FORMAT_R32_UINT, 0);
@@ -59,7 +58,7 @@ bool MeoSimpleMesh::CreateVertexBuffer(ID3D11Device* pDevice)
 
 	D3D11_BUFFER_DESC vDesc; // vertex buffer
 	vDesc.Usage = D3D11_USAGE_DEFAULT;
-	vDesc.ByteWidth = sizeof(Vertex) * 3;
+	vDesc.ByteWidth = sizeof(SimpleVertex) * 3;
 	vDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vDesc.CPUAccessFlags = 0;
 	vDesc.MiscFlags = 0;

@@ -8,21 +8,21 @@
 #include "targetver.h"
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#define NOMINMAX
 // Windows Header Files:
 #include <windows.h>
 
 // C RunTime Header Files
 #include <cstdlib>
-#include <malloc.h>
 #include <memory>
-#include <tchar.h>
 #include <cassert>
 #include <cstdint>
 #include <cstring>
 
-// TODO: reference additional headers your program requires here
+// D3D headers
 #include <dxgi.h>
 #include <d3d11.h>
 
+// Common headers
 #include "Util.h"
 #include "MeoMath.h"
