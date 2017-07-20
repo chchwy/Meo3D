@@ -3,16 +3,17 @@
 // Used by MeoRenderer.rc
 //
 
+#define IDS_MEO3D               102
 #define IDS_APP_TITLE			103
 
 #define IDR_MAINFRAME			128
-#define IDD_MEORENDERER_DIALOG	102
+#define IDD_MEO3D_DIALOG	    102
 #define IDD_ABOUTBOX			103
 #define IDM_ABOUT				104
 #define IDM_EXIT				105
-#define IDI_MEORENDERER			107
+#define IDI_MEO3D   			107
 #define IDI_SMALL				108
-#define IDC_MEORENDERER			109
+#define IDC_MEO3D   			109
 #define IDC_MYICON				2
 #ifndef IDC_STATIC
 #define IDC_STATIC				-1
