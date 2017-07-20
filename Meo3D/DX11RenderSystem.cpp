@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "RenderSystem.h"
+#include "DX11RenderSystem.h"
 
 #include "MeoPipelineStateObject.h"
 #include "MeoShader.h"
@@ -10,15 +10,15 @@
 #pragma comment(lib, "D3DCompiler.lib")
 
 
-RenderSystem::RenderSystem()
+DX11RenderSystem::DX11RenderSystem()
 {
 }
 
-RenderSystem::~RenderSystem()
+DX11RenderSystem::~DX11RenderSystem()
 {
 }
 
-bool RenderSystem::Initialize( HWND hWnd, uint32_t uWidth, uint32_t uHeight )
+bool DX11RenderSystem::Initialize( HWND hWnd, uint32_t uWidth, uint32_t uHeight )
 {
 	m_hWnd = hWnd;
 	assert(m_hWnd);
@@ -57,7 +57,7 @@ bool RenderSystem::Initialize( HWND hWnd, uint32_t uWidth, uint32_t uHeight )
 	return bOK;
 }
 
-void RenderSystem::Shutdown()
+void DX11RenderSystem::Shutdown()
 {
 	m_pPso->Release();
 	delete m_pPso;
@@ -70,11 +70,11 @@ void RenderSystem::Shutdown()
 	m_pSwapChain->Release();
 }
 
-void RenderSystem::Update()
+void DX11RenderSystem::Update()
 {
 }
 
-void RenderSystem::Draw()
+void DX11RenderSystem::Draw()
 {
 	float clearColor[4];
 	clearColor[0] = 0.f;
@@ -91,7 +91,7 @@ void RenderSystem::Draw()
 	m_pSwapChain->Present(0, 0);
 }
 
-bool RenderSystem::InitDeviceAndSwapChain()
+bool DX11RenderSystem::InitDeviceAndSwapChain()
 {
 	HRESULT hr;
 
@@ -136,7 +136,7 @@ bool RenderSystem::InitDeviceAndSwapChain()
 	return true;
 }
 
-bool RenderSystem::InitBackBuffer()
+bool DX11RenderSystem::InitBackBuffer()
 {
 	HRESULT hr;
 
@@ -149,7 +149,7 @@ bool RenderSystem::InitBackBuffer()
 	return true;
 }
 
-bool RenderSystem::InitDepthStencilBuffer()
+bool DX11RenderSystem::InitDepthStencilBuffer()
 {
 	D3D11_TEXTURE2D_DESC desc1;
 	std::memset(&desc1, 0, sizeof(desc1));
@@ -188,7 +188,7 @@ bool RenderSystem::InitDepthStencilBuffer()
 	return true;
 }
 
-bool RenderSystem::InitMainPso()
+bool DX11RenderSystem::InitMainPso()
 {
 	m_pPso = new MeoPipelineStateObject( m_pDevice, m_pContext );
 	m_pPso->CreateDepthStencilState();
@@ -204,7 +204,7 @@ bool RenderSystem::InitMainPso()
 	return true;
 }
 
-bool RenderSystem::SetPipelineStateObject(MeoPipelineStateObject* pPso)
+bool DX11RenderSystem::SetPipelineStateObject(MeoPipelineStateObject* pPso)
 {
 	m_pContext->IASetInputLayout(pPso->pShaders->GetInputLayout());
 	m_pContext->VSSetShader(pPso->pShaders->GetVertexShader(), NULL, 0);

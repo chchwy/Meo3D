@@ -6,11 +6,11 @@
 class MeoPipelineStateObject;
 class MeoSimpleMesh;
 
-class RenderSystem
+class DX11RenderSystem
 {
 public:
-	RenderSystem();
-	~RenderSystem();
+	DX11RenderSystem();
+	~DX11RenderSystem();
 
 	bool Initialize(HWND hWnd, uint32_t uWidth, uint32_t uHeight);
 	void Shutdown();

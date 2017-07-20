@@ -147,7 +147,7 @@
     <ClInclude Include="MeoScene.h" />
     <ClInclude Include="MeoShader.h" />
     <ClInclude Include="MeoSimpleMesh.h" />
-    <ClInclude Include="RenderSystem.h" />
+    <ClInclude Include="DX11RenderSystem.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Util.h" />
@@ -159,7 +159,7 @@
     <ClCompile Include="MeoScene.cpp" />
     <ClCompile Include="MeoShader.cpp" />
     <ClCompile Include="MeoSimpleMesh.cpp" />
-    <ClCompile Include="RenderSystem.cpp" />
+    <ClCompile Include="DX11RenderSystem.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -2,7 +2,7 @@
 
 #include <memory>
 
-class RenderSystem;
+class DX11RenderSystem;
 
 
 class MeoRenderer
@@ -17,5 +17,5 @@ public:
 
 private:
 	HWND m_hWnd = 0;
-	std::unique_ptr< RenderSystem > m_spRenderSystem;
+	std::unique_ptr< DX11RenderSystem > m_spRenderSystem;
 };
