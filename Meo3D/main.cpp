@@ -3,8 +3,9 @@
 
 
 #include "stdafx.h"
-#include "MeoRenderer.h"
 #include <memory>
+#include "Meo3D.h"
+
 
 #define MAX_LOADSTRING 100
 
@@ -68,8 +69,7 @@ int APIENTRY wWinMain
 			bQuit = true;
 		}
 
-		spMeoRenderer->UpdateScene();
-		spMeoRenderer->DrawScene();
+		spMeoRenderer->Render();
     }
 
 	spMeoRenderer->Shutdown();
@@ -128,7 +128,6 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow)
 							 nullptr,            // menu
 							 hInstance,
 							 nullptr);
-
    if (!hWnd)
    {
       return nullptr;

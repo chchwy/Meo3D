@@ -43,13 +43,8 @@ void MeoRenderer::Shutdown()
 	m_spRenderSystem->Shutdown();
 }
 
-void MeoRenderer::UpdateScene()
+void MeoRenderer::Render()
 {
-	m_spRenderSystem->Update();
+    m_spRenderSystem->Update();
+    m_spRenderSystem->Draw();
 }
-
-void MeoRenderer::DrawScene()
-{
-	m_spRenderSystem->Draw();
-}
-
