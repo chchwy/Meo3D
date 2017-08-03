@@ -18,6 +18,7 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include <vector>
 
 // D3D headers
 #include <dxgi.h>

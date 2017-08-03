@@ -16,5 +16,7 @@ public:
 private:
     MeoSceneNode* m_pParentNode = nullptr;
     std::vector<MeoSceneNode*> m_childNodes;
+
+    Float3 m_vPosition;
 };
 
