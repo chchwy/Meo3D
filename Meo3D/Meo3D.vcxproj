@@ -145,6 +145,7 @@
     <ClInclude Include="MeoPipelineStateObject.h" />
     <ClInclude Include="MeoRenderer.h" />
     <ClInclude Include="MeoScene.h" />
+    <ClInclude Include="MeoSceneNode.h" />
     <ClInclude Include="MeoShader.h" />
     <ClInclude Include="MeoSimpleMesh.h" />
     <ClInclude Include="DX11RenderSystem.h" />
@@ -157,6 +158,7 @@
     <ClCompile Include="MeoPipelineStateObject.cpp" />
     <ClCompile Include="MeoRenderer.cpp" />
     <ClCompile Include="MeoScene.cpp" />
+    <ClCompile Include="MeoSceneNode.cpp" />
     <ClCompile Include="MeoShader.cpp" />
     <ClCompile Include="MeoSimpleMesh.cpp" />
     <ClCompile Include="DX11RenderSystem.cpp" />

@@ -54,6 +54,9 @@
     <ClInclude Include="DX11RenderSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MeoSceneNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -78,6 +81,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DX11RenderSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeoSceneNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
