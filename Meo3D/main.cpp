@@ -8,6 +8,8 @@
 #include "Meo3D.h"
 #include "resource.h"
 
+#include "FirstScene.h"
+
 #define MAX_LOADSTRING 100
 
 // Global Variables:
@@ -46,6 +48,8 @@ int APIENTRY wWinMain
 
 	std::shared_ptr< MeoRenderer > spMeoRenderer = std::make_shared<MeoRenderer>();
 	spMeoRenderer->Initialize(hWnd);
+
+    CreateFirstScene( spMeoRenderer.get() );
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE( IDC_MEO3D ));
 

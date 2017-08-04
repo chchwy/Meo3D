@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 class MeoSceneNode;
 
 
@@ -9,9 +11,11 @@ public:
 	MeoScene();
 	~MeoScene();
     
+    void Init();
 
+    MeoSceneNode* GetRootNode();
 
 private:
-    MeoSceneNode* m_pRootNode = nullptr;
+    std::unique_ptr< MeoSceneNode > m_pRootNode = nullptr;
 };
 
