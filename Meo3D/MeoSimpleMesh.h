@@ -13,10 +13,11 @@ struct SimpleVertex
 class MeoSimpleMesh
 {
 public:
-	MeoSimpleMesh();
+	MeoSimpleMesh( ID3D11Device* pDevice );
 	~MeoSimpleMesh();
 
-	bool Initialize(ID3D11Device* pDevice);
+	bool Initialize(const std::vector<SimpleVertex>& vVertexData, 
+                    const std::vector<UINT>& vIndexData );
 	void Shutdown();
 
 	void Render(ID3D11DeviceContext* pContext);
@@ -34,5 +35,7 @@ private:
 
 	size_t m_uVertexCount = 0;
 	size_t m_uIndexCount = 0;
+
+    ID3D11Device* m_pDevice = nullptr;
 };
 

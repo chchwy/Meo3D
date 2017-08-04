@@ -4,7 +4,9 @@
 
 
 class MeoPipelineStateObject;
+class MeoScene;
 class MeoSimpleMesh;
+
 
 class DX11RenderSystem
 {
@@ -18,6 +20,9 @@ public:
 	void Update();
 	void Draw();
 
+    ID3D11Device* GetDevice() const { return m_pDevice; }
+
+    void SetScene( std::shared_ptr<MeoScene> spScene );
 private:
 	// D3D 11 initialization
 	bool InitDeviceAndSwapChain();
@@ -46,6 +51,6 @@ private:
 
 	MeoPipelineStateObject* m_pPso = nullptr;
 
-	MeoSimpleMesh* m_pMesh = nullptr;
+    std::shared_ptr<MeoScene> m_spScene;
 };
 

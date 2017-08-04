@@ -2,8 +2,9 @@
 #include "MeoSimpleMesh.h"
 #include <iostream>
 
-MeoSimpleMesh::MeoSimpleMesh()
+MeoSimpleMesh::MeoSimpleMesh( ID3D11Device* pDevice )
 {
+    m_pDevice = pDevice;
 }
 
 MeoSimpleMesh::~MeoSimpleMesh()
@@ -11,7 +12,8 @@ MeoSimpleMesh::~MeoSimpleMesh()
     Shutdown();
 }
 
-bool MeoSimpleMesh::Initialize(ID3D11Device* pDevice)
+bool MeoSimpleMesh::Initialize(const std::vector<SimpleVertex>& vVertexData,
+                               const std::vector<UINT>& vIndexData )
 {
 	m_rawMeshData.resize(3);
 	m_rawMeshData[0].pos = { -1, -1, 0 };
@@ -32,7 +34,7 @@ bool MeoSimpleMesh::Initialize(ID3D11Device* pDevice)
 
 	m_uIndexCount = m_rawIndexData.size();
 
-	return CreateVertexBuffer(pDevice);
+	return CreateVertexBuffer(m_pDevice);
 }
 
 void MeoSimpleMesh::Shutdown()

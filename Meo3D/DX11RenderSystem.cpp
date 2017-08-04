@@ -51,9 +51,6 @@ bool DX11RenderSystem::Initialize( HWND hWnd, uint32_t uWidth, uint32_t uHeight 
 	bOK = InitMainPso();
 	assert(bOK);
 
-	m_pMesh = new MeoSimpleMesh;
-	m_pMesh->Initialize(m_pDevice);
-
 	return bOK;
 }
 
@@ -86,9 +83,16 @@ void DX11RenderSystem::Draw()
 
 	SetPipelineStateObject(m_pPso);
 
-	m_pMesh->Render(m_pContext);
+    //m_spScene->
+    // Draw something...
 
 	m_pSwapChain->Present(0, 0);
+}
+
+void DX11RenderSystem::SetScene( std::shared_ptr<MeoScene> spScene )
+{
+    assert( spScene );
+    m_spScene = spScene;
 }
 
 bool DX11RenderSystem::InitDeviceAndSwapChain()

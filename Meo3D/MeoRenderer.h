@@ -2,6 +2,7 @@
 
 #include <memory>
 
+class MeoScene;
 class DX11RenderSystem;
 
 
@@ -15,7 +16,10 @@ public:
 	void Shutdown();
     void Render();
 
+    MeoScene* Scene() const { return m_spScene.get(); }
+
 private:
 	HWND m_hWnd = 0;
-	std::unique_ptr< DX11RenderSystem > m_spRenderSystem;
+	std::unique_ptr<DX11RenderSystem> m_spRenderSystem;
+    std::shared_ptr<MeoScene> m_spScene;
 };
