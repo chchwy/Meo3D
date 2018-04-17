@@ -3,7 +3,7 @@
 #include "MeoSceneNode.h"
 #include "MeoSimpleMesh.h"
 
-MeoScene::MeoScene( ID3D11Device* pDevice )
+MeoScene::MeoScene(ID3D11Device* pDevice)
 {
     m_pDevice = pDevice;
 }
@@ -24,5 +24,15 @@ MeoSceneNode* MeoScene::GetRootNode() const
 
 MeoSimpleMesh* MeoScene::CreateSimpleMesh()
 {
-    return new MeoSimpleMesh( m_pDevice );
+    std::shared_ptr<MeoSimpleMesh> spMesh = std::make_shared<MeoSimpleMesh>(m_pDevice);
+    spMesh->SetScene(this);
+    m_vSimpleMeshes.push_back(spMesh);
+
+    return spMesh.get();
+}
+
+const std::vector<std::shared_ptr<MeoSimpleMesh>>&
+MeoScene::GetSimpleMeshes()
+{
+    return m_vSimpleMeshes;
 }

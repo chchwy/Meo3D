@@ -54,6 +54,12 @@ void MeoSimpleMesh::Render(ID3D11DeviceContext* pContext)
 	pContext->DrawIndexed(m_uIndexCount, 0, 0);
 }
 
+void MeoSimpleMesh::SetScene(MeoScene* sc)
+{
+    assert(sc);
+    m_pScene = sc;
+}
+
 bool MeoSimpleMesh::CreateVertexBuffer(ID3D11Device* pDevice)
 {
 	HRESULT hr;

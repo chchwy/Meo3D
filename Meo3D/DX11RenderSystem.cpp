@@ -4,6 +4,7 @@
 #include "MeoPipelineStateObject.h"
 #include "MeoShader.h"
 #include "MeoSimpleMesh.h"
+#include "MeoScene.h"
 
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d11.lib")
@@ -83,9 +84,12 @@ void DX11RenderSystem::Draw()
 
 	SetPipelineStateObject(m_pPso);
 
-    //m_spScene->
     // Draw something...
-
+    auto vSimpleMeshes = m_spScene->GetSimpleMeshes();
+    for (std::shared_ptr<MeoSimpleMesh>& spMesh : vSimpleMeshes)
+    {
+        spMesh->Render(m_pContext);
+    }
 	m_pSwapChain->Present(0, 0);
 }
 

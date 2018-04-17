@@ -2,6 +2,8 @@
 
 #include <vector>
 
+class MeoScene;
+
 
 struct SimpleVertex
 {
@@ -19,8 +21,8 @@ public:
 	bool Initialize(const std::vector<SimpleVertex>& vVertexData, 
                     const std::vector<UINT>& vIndexData );
 	void Shutdown();
-
 	void Render(ID3D11DeviceContext* pContext);
+    void SetScene(MeoScene* sc);
 
 private:
 	bool CreateVertexBuffer(ID3D11Device* pDevice);
@@ -37,5 +39,6 @@ private:
 	size_t m_uIndexCount = 0;
 
     ID3D11Device* m_pDevice = nullptr;
+    MeoScene* m_pScene = nullptr;
 };
 
