@@ -15,26 +15,15 @@ MeoSimpleMesh::~MeoSimpleMesh()
 bool MeoSimpleMesh::Initialize(const std::vector<SimpleVertex>& vVertexData,
                                const std::vector<UINT>& vIndexData )
 {
-	m_vOrigMeshData.resize(3);
-	m_vOrigMeshData[0].pos = { -1, -1, 0 };
-	m_vOrigMeshData[0].color = { 1, 0, 0, 1 };
+	m_vOrigMeshData = vVertexData;
+	m_uVertexCount = vVertexData.size();
 
-	m_vOrigMeshData[1].pos = { 1, -1, 0 };
-	m_vOrigMeshData[1].color = { 0, 1, 0, 1 };
+    m_vOrigIndexData = vIndexData;
+	m_uIndexCount = vIndexData.size();
 
-	m_vOrigMeshData[2].pos = { -1, 1, 0 };
-	m_vOrigMeshData[2].color = { 0, 0, 1, 1 };
-
-	m_uVertexCount = m_vOrigMeshData.size();
-
-	m_vOrigIndexData.resize(3);
-	m_vOrigIndexData[0] = 2;
-	m_vOrigIndexData[1] = 1;
-	m_vOrigIndexData[2] = 0;
-
-	m_uIndexCount = m_vOrigIndexData.size();
-
-	return CreateVertexBuffer(m_pDevice);
+	m_bInitialized = CreateVertexBuffer(m_pDevice);
+    assert(m_bInitialized);
+    return m_bInitialized;
 }
 
 void MeoSimpleMesh::Shutdown()
@@ -45,13 +34,16 @@ void MeoSimpleMesh::Shutdown()
 
 void MeoSimpleMesh::Render(ID3D11DeviceContext* pContext)
 {
-	UINT stride = sizeof(SimpleVertex);
-	UINT offset = 0;
-	pContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset );
-	pContext->IASetIndexBuffer(m_pIndexedBuffer, DXGI_FORMAT_R32_UINT, 0);
-	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    if (m_bInitialized)
+    {
+        UINT stride = sizeof(SimpleVertex);
+        UINT offset = 0;
+        pContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+        pContext->IASetIndexBuffer(m_pIndexedBuffer, DXGI_FORMAT_R32_UINT, 0);
+        pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	pContext->DrawIndexed(m_uIndexCount, 0, 0);
+        pContext->DrawIndexed(m_uIndexCount, 0, 0);
+    }
 }
 
 void MeoSimpleMesh::SetScene(MeoScene* sc)
