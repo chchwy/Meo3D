@@ -29,8 +29,8 @@ private:
 
 	bool m_bInitialized = false;
 
-	std::vector<SimpleVertex> m_rawMeshData;
-	std::vector<UINT> m_rawIndexData;
+	std::vector<SimpleVertex> m_vOrigMeshData;
+	std::vector<UINT> m_vOrigIndexData;
 
 	ID3D11Buffer* m_pVertexBuffer = nullptr;
 	ID3D11Buffer* m_pIndexedBuffer = nullptr;

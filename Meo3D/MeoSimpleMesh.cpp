@@ -15,24 +15,24 @@ MeoSimpleMesh::~MeoSimpleMesh()
 bool MeoSimpleMesh::Initialize(const std::vector<SimpleVertex>& vVertexData,
                                const std::vector<UINT>& vIndexData )
 {
-	m_rawMeshData.resize(3);
-	m_rawMeshData[0].pos = { -1, -1, 0 };
-	m_rawMeshData[0].color = { 1, 0, 0, 1 };
+	m_vOrigMeshData.resize(3);
+	m_vOrigMeshData[0].pos = { -1, -1, 0 };
+	m_vOrigMeshData[0].color = { 1, 0, 0, 1 };
 
-	m_rawMeshData[1].pos = { 1, -1, 0 };
-	m_rawMeshData[1].color = { 0, 1, 0, 1 };
+	m_vOrigMeshData[1].pos = { 1, -1, 0 };
+	m_vOrigMeshData[1].color = { 0, 1, 0, 1 };
 
-	m_rawMeshData[2].pos = { -1, 1, 0 };
-	m_rawMeshData[2].color = { 0, 0, 1, 1 };
+	m_vOrigMeshData[2].pos = { -1, 1, 0 };
+	m_vOrigMeshData[2].color = { 0, 0, 1, 1 };
 
-	m_uVertexCount = m_rawMeshData.size();
+	m_uVertexCount = m_vOrigMeshData.size();
 
-	m_rawIndexData.resize(3);
-	m_rawIndexData[0] = 2;
-	m_rawIndexData[1] = 1;
-	m_rawIndexData[2] = 0;
+	m_vOrigIndexData.resize(3);
+	m_vOrigIndexData[0] = 2;
+	m_vOrigIndexData[1] = 1;
+	m_vOrigIndexData[2] = 0;
 
-	m_uIndexCount = m_rawIndexData.size();
+	m_uIndexCount = m_vOrigIndexData.size();
 
 	return CreateVertexBuffer(m_pDevice);
 }
@@ -73,7 +73,7 @@ bool MeoSimpleMesh::CreateVertexBuffer(ID3D11Device* pDevice)
 	vDesc.StructureByteStride = 0;
 
 	D3D11_SUBRESOURCE_DATA vData;
-	vData.pSysMem = m_rawMeshData.data();
+	vData.pSysMem = m_vOrigMeshData.data();
 	vData.SysMemPitch = 0;
 	vData.SysMemSlicePitch = 0;
 
@@ -94,7 +94,7 @@ bool MeoSimpleMesh::CreateVertexBuffer(ID3D11Device* pDevice)
 
 	// Give the subresource structure a pointer to the index data.
 	D3D11_SUBRESOURCE_DATA iData;
-	iData.pSysMem = m_rawIndexData.data();
+	iData.pSysMem = m_vOrigIndexData.data();
 	iData.SysMemPitch = 0;
 	iData.SysMemSlicePitch = 0;
 
