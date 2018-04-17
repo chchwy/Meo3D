@@ -16,7 +16,6 @@ Vector2U GetWindowSize(HWND hWnd)
 		int height = rect.bottom - rect.top;
 		return Vector2U(width, height);
 	}
-
 	assert( false );
 	return Vector2U(0, 0);
 }

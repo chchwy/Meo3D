@@ -6,7 +6,6 @@
 
 void CreateFirstScene( const MeoRenderer* pMeoRenderer )
 {
-
     MeoScene* pScene = pMeoRenderer->Scene();
     MeoSimpleMesh* pSimpleMesh1 = pScene->CreateSimpleMesh();
     
