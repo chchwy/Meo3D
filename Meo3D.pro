@@ -1,7 +1,9 @@
 
 TEMPLATE = subdirs
 
-SUBDIRS = editor engine
+SUBDIRS = \
+  editor \
+  engine
 
 # build the project sequentially as listed in SUBDIRS!
 CONFIG += ordered

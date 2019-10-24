@@ -4,6 +4,7 @@
 class D3DWidget : public QWidget
 {
     Q_OBJECT
+
 public:
     D3DWidget(QWidget* parent);
     ~D3DWidget() override;

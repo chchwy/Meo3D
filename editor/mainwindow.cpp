@@ -13,8 +13,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     ui->centralwidget->setLayout(mainLayout);
-    D3DWidget* d3dwidget = new D3DWidget(this);
 
+    D3DWidget* d3dwidget = new D3DWidget(this);
+    mainLayout->addWidget(d3dwidget);
     //MeoEngine* engine = new MeoEngine;
     //delete engine;
 }
