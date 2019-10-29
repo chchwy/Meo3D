@@ -1,12 +1,8 @@
 
 TEMPLATE = subdirs
 
-SUBDIRS = \
-  editor \
-  engine
+SUBDIRS = engine editor
 
-# build the project sequentially as listed in SUBDIRS!
-CONFIG += ordered
 
 # where to find the sub projects - give the folders
 engine.subdir = engine
