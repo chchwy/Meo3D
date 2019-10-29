@@ -1,10 +1,7 @@
-#ifndef MEOENGINE_H
-#define MEOENGINE_H
+#pragma once
 
 class MeoEngine
 {
 public:
     MeoEngine();
 };
-
-#endif // MEOENGINE_H
