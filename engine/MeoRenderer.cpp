@@ -3,6 +3,8 @@
 #include "MeoRenderer.h"
 
 #include <cassert>
+#include "dx12/DX12Renderer.h"
+
 //#include "MeoScene.h"
 //#include "DX11RenderSystem.h"
 
@@ -31,6 +33,10 @@ MeoRenderer::~MeoRenderer()
 void MeoRenderer::Initialize(HWND hWnd)
 {
     m_hWnd = hWnd;
+
+    mNativeRenderer = std::make_unique<DX12Renderer>();
+    mNativeRenderer->init();
+
     /*
     Vector2U screenSize = GetWindowSize(hWnd);
     m_spRenderSystem = std::make_unique<DX11RenderSystem>();

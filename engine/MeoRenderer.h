@@ -3,7 +3,7 @@
 #include <memory>
 
 class MeoScene;
-class DX11RenderSystem;
+class DX12Renderer;
 
 
 class MeoRenderer
@@ -20,6 +20,6 @@ public:
 
 private:
 	HWND m_hWnd = 0;
-    //std::unique_ptr<DX11RenderSystem> m_spRenderSystem;
+    std::unique_ptr<DX12Renderer> mNativeRenderer;
     //std::shared_ptr<MeoScene> m_spScene;
 };

@@ -11,7 +11,17 @@
 #include <memory>
 
 // D3D headers
-#include <dxgi.h>
-#include <d3d11.h>
+#include <dxgi1_4.h>
+#include <d3d12.h>
+
+// helpers
+#include "helpers.h"
+
+#define ENABLE_DEBUG_LAYER
+
+#if defined(DEBUG) || defined(_DEBUG)
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
 
 #endif // MEOPCH_H

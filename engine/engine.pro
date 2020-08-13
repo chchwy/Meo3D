@@ -18,11 +18,18 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x050900    # disables all the APIs depr
 
 PRECOMPILED_HEADER += meo-pch.h
 
+MOC_DIR     = .moc
+OBJECTS_DIR = .obj
+UI_DIR      = .ui
+
 SOURCES += \
+    dx12/DX12Renderer.cpp \
     meoengine.cpp \
     MeoRenderer.cpp
 
 HEADERS += \
+    dx12/DX12Renderer.h \
+    helpers.h \
     meoengine.h \
     MeoRenderer.h
 
