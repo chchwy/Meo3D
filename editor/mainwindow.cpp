@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     D3DWidget* d3dwidget = new D3DWidget(this);
     mainLayout->addWidget(d3dwidget);
+
     //MeoEngine* engine = new MeoEngine;
     //delete engine;
 }
