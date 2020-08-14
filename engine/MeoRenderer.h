@@ -12,7 +12,7 @@ public:
 	MeoRenderer();
 	~MeoRenderer();
 
-	void Initialize(HWND hWnd);
+	void init(HWND hWnd, int width, int height);
 	void Shutdown();
     void Render();
 

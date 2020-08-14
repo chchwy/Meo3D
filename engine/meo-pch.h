@@ -9,6 +9,8 @@
 // Cpp headers
 #include <string>
 #include <memory>
+#include <system_error>
+#include <iostream>
 
 // D3D headers
 #include <dxgi1_4.h>

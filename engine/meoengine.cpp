@@ -8,8 +8,8 @@ MeoEngine::MeoEngine()
     //std::cout << "Engine!" << std::endl;
 }
 
-void MeoEngine::init(HWND hWnd)
+void MeoEngine::init(HWND hWnd, int width, int height)
 {
     mRenderer = std::make_unique<MeoRenderer>();
-    mRenderer->Initialize(hWnd);
+    mRenderer->init(hWnd, width, height);
 }

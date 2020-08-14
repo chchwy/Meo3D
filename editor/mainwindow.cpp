@@ -3,7 +3,10 @@
 #include <QVBoxLayout>
 
 #include "meoengine.h"
+#include "MeoRenderer.h"
 #include "d3dwidget.h"
+
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -14,15 +17,22 @@ MainWindow::MainWindow(QWidget *parent)
     QVBoxLayout* mainLayout = new QVBoxLayout;
     ui->centralwidget->setLayout(mainLayout);
 
-    D3DWidget* d3dwidget = new D3DWidget(this);
+    d3dwidget = new D3DWidget(this);
     mainLayout->addWidget(d3dwidget);
-
-    //MeoEngine* engine = new MeoEngine;
-    //delete engine;
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::showEvent(QShowEvent*)
+{
+    if (!mEngineInitialized)
+    {
+        mEngine = std::make_unique<MeoEngine>();
+        mEngine->init((HWND)d3dwidget->winId(), d3dwidget->width(), d3dwidget->height());
+        mEngineInitialized = true;
+    }
 }
 
