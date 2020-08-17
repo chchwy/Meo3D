@@ -15,7 +15,7 @@ inline void ThrowIfFailed(HRESULT hr, const char* file, const int line, const ch
     }
 }
 
-void debugLog(std::string s);
+void debugLog(const std::string& s);
 
 class Status
 {

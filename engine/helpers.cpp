@@ -22,7 +22,7 @@ std::string exceptionMessage(HRESULT hr, const char* file, const int line, const
     return s;
 }
 
-void debugLog(std::string s)
+void debugLog(const std::string& s)
 {
     std::stringstream sout;
     sout << "[LOG] " << s << "\n";

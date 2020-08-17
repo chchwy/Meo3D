@@ -79,8 +79,9 @@ Status DX12Renderer::initD3D(HWND hWnd, int width, int height)
     msaaQualityLevels.NumQualityLevels = 0;
     device->CheckFeatureSupport(D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS, &msaaQualityLevels, sizeof(msaaQualityLevels));
 
-    UINT msaa4xQuality = msaaQualityLevels.NumQualityLevels;
-    assert(msaa4xQuality > 0 && "Unexpected MSAA quality level.");
+    mMSAAQuality = msaaQualityLevels.NumQualityLevels;
+    debugLog(std::string("MSAA Quality=") + std::to_string(mMSAAQuality));
+    assert(mMSAAQuality > 0 && "Unexpected MSAA quality level.");
 
     CreateCommandObjects(device);
     CreateSwapChain(device, hWnd, width, height);
@@ -123,7 +124,7 @@ void DX12Renderer::CreateSwapChain(ID3D12Device* device, HWND hWnd, int width, i
     sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
     sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
     sd.SampleDesc.Count = 1;
-    sd.SampleDesc.Quality = 0;
+    sd.SampleDesc.Quality = mMSAAQuality - 1;
     sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     sd.BufferCount = 2;
     sd.OutputWindow = hWnd;
