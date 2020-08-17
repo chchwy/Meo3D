@@ -33,7 +33,7 @@ Status DX12Renderer::init(HWND hWnd, int width, int height)
     {
         initD3D(hWnd, width, height);
     }
-    catch (const std::exception& e)
+    catch (const std::exception&)
     {
         assert(false);
         return Status::FAIL;
@@ -84,17 +84,16 @@ Status DX12Renderer::initD3D(HWND hWnd, int width, int height)
 
     CreateCommandObjects(device);
     CreateSwapChain(device, hWnd, width, height);
+    CreateDescriptorHeaps(device);
 
     return Status::OK;
 }
 
-Status DX12Renderer::CreateCommandObjects(ID3D12Device* device)
+void DX12Renderer::CreateCommandObjects(ID3D12Device* device)
 {
     ID3D12CommandQueue* commandQueue;
     ID3D12CommandAllocator* commandAllocator;
     ID3D12GraphicsCommandList* commandList;
-
-    HRESULT hr = S_OK;
 
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};
     queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
@@ -111,8 +110,6 @@ Status DX12Renderer::CreateCommandObjects(ID3D12Device* device)
     // This is because the first time we refer to the command list we will Reset it
     // and it needs to be closed before calling Reset
     commandList->Close();
-
-    return Status::OK;
 }
 
 void DX12Renderer::CreateSwapChain(ID3D12Device* device, HWND hWnd, int width, int height)
@@ -138,4 +135,21 @@ void DX12Renderer::CreateSwapChain(ID3D12Device* device, HWND hWnd, int width, i
     HR(mDxgiFactory->CreateSwapChain(mCommandQueue, &sd, &swapChain));
 
     mSwapChain = swapChain;
+}
+
+void DX12Renderer::CreateDescriptorHeaps(ID3D12Device* device)
+{
+    D3D12_DESCRIPTOR_HEAP_DESC rtvDesc;
+    rtvDesc.NumDescriptors = 2;
+    rtvDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+    rtvDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+    rtvDesc.NodeMask = 0;
+    HR(device->CreateDescriptorHeap(&rtvDesc, IID_PPV_ARGS(&mRtvHeap)));
+
+    D3D12_DESCRIPTOR_HEAP_DESC dsvDesc;
+    dsvDesc.NumDescriptors = 1;
+    dsvDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+    dsvDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+    dsvDesc.NodeMask = 0;
+    HR(device->CreateDescriptorHeap(&dsvDesc, IID_PPV_ARGS(&mDsvHeap)));
 }

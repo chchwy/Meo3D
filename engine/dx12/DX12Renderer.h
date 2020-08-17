@@ -12,8 +12,9 @@ public:
 
 private:
     Status initD3D(HWND hWnd, int width, int height);
-    Status CreateCommandObjects(ID3D12Device*);
+    void CreateCommandObjects(ID3D12Device*);
     void CreateSwapChain(ID3D12Device*, HWND hWnd, int width, int height);
+    void CreateDescriptorHeaps(ID3D12Device*);
 
     IDXGIFactory* mDxgiFactory;
     ID3D12Device* mDevice;
@@ -22,6 +23,9 @@ private:
     ID3D12CommandList* mCommandList;
     ID3D12CommandAllocator* mCommandAllocator;
     IDXGISwapChain* mSwapChain;
+
+    ID3D12DescriptorHeap* mRtvHeap;
+    ID3D12DescriptorHeap* mDsvHeap;
 
     int mWidth = 0;
     int mHeight = 0;
