@@ -16,24 +16,33 @@ DX12Renderer::DX12Renderer()
 
 DX12Renderer::~DX12Renderer()
 {
+    mDxgiFactory->Release();
+    mDevice->Release();
+    mFence->Release();
+    mCommandQueue->Release();
+    mCommandList->Release();
+    mCommandAllocator->Release();
+    mSwapChain->Release();
 }
 
 Status DX12Renderer::init(HWND hWnd, int width, int height)
 {
-    std::cout << "Init Dx12 Renderer!" << std::endl;
+    debugLog("Init Dx12 Renderer!");
 
-    HRESULT hr = initD3D(hWnd, width, height);
-    if (FAILED(hr))
+    try
     {
-        std::cerr << std::system_category().message(hr);
+        initD3D(hWnd, width, height);
+    }
+    catch (const std::exception& e)
+    {
+        assert(false);
         return Status::FAIL;
     }
-
     return Status::OK;
 }
 
 
-HRESULT DX12Renderer::initD3D(HWND hWnd, int width, int height)
+Status DX12Renderer::initD3D(HWND hWnd, int width, int height)
 {
 
 #ifdef ENABLE_DEBUG_LAYER
@@ -49,15 +58,15 @@ HRESULT DX12Renderer::initD3D(HWND hWnd, int width, int height)
         return Status::FAIL;
     }
 
-    mDxgiFactory = dxgiFactory;
-
     ID3D12Device* device;
     hr = D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&device));
 
-    mDevice = device;
-
     ID3D12Fence* fence;
     hr = device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+
+    mDxgiFactory = dxgiFactory;
+    mDevice = device;
+    mFence = fence;
 
     UINT rtvDescSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     UINT dsvDescSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
@@ -76,10 +85,10 @@ HRESULT DX12Renderer::initD3D(HWND hWnd, int width, int height)
     CreateCommandObjects(device);
     CreateSwapChain(device, hWnd, width, height);
 
-    return hr;
+    return Status::OK;
 }
 
-HRESULT DX12Renderer::CreateCommandObjects(ID3D12Device* device)
+Status DX12Renderer::CreateCommandObjects(ID3D12Device* device)
 {
     ID3D12CommandQueue* commandQueue;
     ID3D12CommandAllocator* commandAllocator;
@@ -87,7 +96,6 @@ HRESULT DX12Renderer::CreateCommandObjects(ID3D12Device* device)
 
     HRESULT hr = S_OK;
 
-    __FUNCTION__;
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};
     queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
     queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
@@ -96,9 +104,15 @@ HRESULT DX12Renderer::CreateCommandObjects(ID3D12Device* device)
     HR(device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator, nullptr, IID_PPV_ARGS(&commandList)));
 
     mCommandQueue = commandQueue;
+    mCommandList = commandList;
+    mCommandAllocator = commandAllocator;
 
+    // Start off in a closed state.
+    // This is because the first time we refer to the command list we will Reset it
+    // and it needs to be closed before calling Reset
     commandList->Close();
-    return hr;
+
+    return Status::OK;
 }
 
 void DX12Renderer::CreateSwapChain(ID3D12Device* device, HWND hWnd, int width, int height)
@@ -122,4 +136,6 @@ void DX12Renderer::CreateSwapChain(ID3D12Device* device, HWND hWnd, int width, i
 
     IDXGISwapChain* swapChain;
     HR(mDxgiFactory->CreateSwapChain(mCommandQueue, &sd, &swapChain));
+
+    mSwapChain = swapChain;
 }

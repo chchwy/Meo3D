@@ -11,13 +11,17 @@ public:
     Status init(HWND, int width, int height);
 
 private:
-    HRESULT initD3D(HWND hWnd, int width, int height);
-    HRESULT CreateCommandObjects(ID3D12Device*);
+    Status initD3D(HWND hWnd, int width, int height);
+    Status CreateCommandObjects(ID3D12Device*);
     void CreateSwapChain(ID3D12Device*, HWND hWnd, int width, int height);
 
-    ID3D12Device* mDevice;
-    ID3D12CommandQueue* mCommandQueue;
     IDXGIFactory* mDxgiFactory;
+    ID3D12Device* mDevice;
+    ID3D12Fence* mFence;
+    ID3D12CommandQueue* mCommandQueue;
+    ID3D12CommandList* mCommandList;
+    ID3D12CommandAllocator* mCommandAllocator;
+    IDXGISwapChain* mSwapChain;
 
     int mWidth = 0;
     int mHeight = 0;
