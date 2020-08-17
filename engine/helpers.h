@@ -4,20 +4,18 @@
 // Source: https://github.com/Microsoft/DirectX-Graphics-Samples
 #define HR(h) ThrowIfFailed((h), __FILE__, __LINE__, __FUNCTION__);
 
+std::string exceptionMessage(HRESULT hr, const char* file, const int line, const char* func);
+
 inline void ThrowIfFailed(HRESULT hr, const char* file, const int line, const char* func)
 {
     if (FAILED(hr))
     {
-        std::string message = std::system_category().message(hr);
-        message += file;
-        message += ", LINE ";
-        message += std::to_string(line);
-        message += "FUNCTION: ";
-        message += func;
-        std::cout << message;
-        //throw std::exception(message.c_str());
+        std::string message = exceptionMessage(hr, file, line, func);
+        throw std::exception(message.c_str());
     }
 }
+
+void debugLog(std::string s);
 
 class Status
 {

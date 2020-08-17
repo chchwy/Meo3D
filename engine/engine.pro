@@ -24,6 +24,7 @@ UI_DIR      = .ui
 
 SOURCES += \
     dx12/DX12Renderer.cpp \
+    helpers.cpp \
     meoengine.cpp \
     MeoRenderer.cpp
 
