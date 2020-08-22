@@ -15,6 +15,7 @@ private:
     void CreateCommandObjects(ID3D12Device*);
     void CreateSwapChain(ID3D12Device*, HWND hWnd, int width, int height);
     void CreateDescriptorHeaps(ID3D12Device*);
+    void CreateBackBufferRenderTargets();
 
     IDXGIFactory* mDxgiFactory;
     ID3D12Device* mDevice;
@@ -27,7 +28,11 @@ private:
     ID3D12DescriptorHeap* mRtvHeap;
     ID3D12DescriptorHeap* mDsvHeap;
 
+    ID3D12Resource* mSwapChainBuffers[2];
+
     int mWidth = 0;
     int mHeight = 0;
     int mMSAAQuality = 0;
+
+    UINT mRtvDescSize = 0;
 };

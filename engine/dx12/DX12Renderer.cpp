@@ -23,6 +23,9 @@ DX12Renderer::~DX12Renderer()
     mCommandList->Release();
     mCommandAllocator->Release();
     mSwapChain->Release();
+
+    mSwapChainBuffers[0]->Release();
+    mSwapChainBuffers[1]->Release();
 }
 
 Status DX12Renderer::init(HWND hWnd, int width, int height)
@@ -68,7 +71,7 @@ Status DX12Renderer::initD3D(HWND hWnd, int width, int height)
     mDevice = device;
     mFence = fence;
 
-    UINT rtvDescSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    mRtvDescSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     UINT dsvDescSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
     UINT cbvSrvUavDescSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
@@ -86,7 +89,7 @@ Status DX12Renderer::initD3D(HWND hWnd, int width, int height)
     CreateCommandObjects(device);
     CreateSwapChain(device, hWnd, width, height);
     CreateDescriptorHeaps(device);
-
+    CreateBackBufferRenderTargets();
     return Status::OK;
 }
 
@@ -153,4 +156,16 @@ void DX12Renderer::CreateDescriptorHeaps(ID3D12Device* device)
     dsvDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     dsvDesc.NodeMask = 0;
     HR(device->CreateDescriptorHeap(&dsvDesc, IID_PPV_ARGS(&mDsvHeap)));
+}
+
+void DX12Renderer::CreateBackBufferRenderTargets()
+{
+    D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapHandle = mRtvHeap->GetCPUDescriptorHandleForHeapStart();
+    for (int i = 0; i < 2; ++i)
+    {
+        HR(mSwapChain->GetBuffer(i, IID_PPV_ARGS(&mSwapChainBuffers[i])));
+
+        mDevice->CreateRenderTargetView(mSwapChainBuffers[i], nullptr, rtvHeapHandle);
+        rtvHeapHandle.ptr += mRtvDescSize;
+    }
 }
