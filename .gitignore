@@ -84,3 +84,8 @@ ipch/
 *.dll
 *.exe
 
+/engine/debug
+/engine/release
+/editor/debug
+/editor/release
+*-pch.h.cpp
