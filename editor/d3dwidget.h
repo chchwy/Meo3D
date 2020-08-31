@@ -10,9 +10,14 @@ public:
     ~D3DWidget() override;
 
     QPaintEngine* paintEngine() const override { return nullptr; }
+    void render();
+
+protected:
+    void paintEvent(QPaintEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
-    void update();
+    void tick();
 };
 
 
