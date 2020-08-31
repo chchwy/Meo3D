@@ -2,6 +2,7 @@
 #include <iostream>
 #include <system_error>
 #include <cassert>
+#include "d3dx12.h"
 
 #pragma comment(lib,"d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
@@ -32,15 +33,17 @@ Status DX12Renderer::init(HWND hWnd, int width, int height)
 {
     debugLog("Init Dx12 Renderer!");
 
-    try
-    {
+    mWidth = width;
+    mHeight = height;
+    //try
+    //{
         initD3D(hWnd, width, height);
-    }
-    catch (const std::exception&)
-    {
-        assert(false);
-        return Status::FAIL;
-    }
+    //}
+    //catch (const std::exception&)
+    //{
+    //    assert(false);
+    //    return Status::FAIL;
+    //}
     return Status::OK;
 }
 
@@ -90,6 +93,7 @@ Status DX12Renderer::initD3D(HWND hWnd, int width, int height)
     CreateSwapChain(device, hWnd, width, height);
     CreateDescriptorHeaps(device);
     CreateBackBufferRenderTargets();
+    CreateDepthStencilBuffer();
     return Status::OK;
 }
 
@@ -160,12 +164,83 @@ void DX12Renderer::CreateDescriptorHeaps(ID3D12Device* device)
 
 void DX12Renderer::CreateBackBufferRenderTargets()
 {
-    D3D12_CPU_DESCRIPTOR_HANDLE rtvHeapHandle = mRtvHeap->GetCPUDescriptorHandleForHeapStart();
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHeapHandle(mRtvHeap->GetCPUDescriptorHandleForHeapStart());
     for (int i = 0; i < 2; ++i)
     {
         HR(mSwapChain->GetBuffer(i, IID_PPV_ARGS(&mSwapChainBuffers[i])));
 
         mDevice->CreateRenderTargetView(mSwapChainBuffers[i], nullptr, rtvHeapHandle);
-        rtvHeapHandle.ptr += mRtvDescSize;
+        rtvHeapHandle.Offset(1, mRtvDescSize);
+    }
+}
+
+void DX12Renderer::CreateDepthStencilBuffer()
+{
+    D3D12_RESOURCE_DESC d;
+    d.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+    d.Alignment = 0;
+    d.Width = mWidth;
+    d.Height = mHeight;
+    d.DepthOrArraySize = 1;
+    d.MipLevels = 1;
+    d.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    d.SampleDesc.Count = 1;
+    d.SampleDesc.Quality = mMSAAQuality - 1;
+    d.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+    d.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+    D3D12_CLEAR_VALUE c;
+    c.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    c.DepthStencil.Depth = 1.0f;
+    c.DepthStencil.Stencil = 0;
+
+    CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_DEFAULT);
+    HR(mDevice->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE,
+                                        &d, D3D12_RESOURCE_STATE_COMMON, &c,
+                                        IID_PPV_ARGS(&mDepthStencilBuffer)));
+
+    D3D12_CPU_DESCRIPTOR_HANDLE handle = mDsvHeap->GetCPUDescriptorHandleForHeapStart();
+    mDevice->CreateDepthStencilView(mDepthStencilBuffer, nullptr, handle); // nullptr only works when the buffer is not typeless
+
+
+    mCommandList->Reset(mCommandAllocator, nullptr);
+
+    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(mDepthStencilBuffer, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+    mCommandList->ResourceBarrier(1, &barrier);
+
+    mCommandList->Close();
+
+    ID3D12CommandList* cmdLists[] = { mCommandList };
+    mCommandQueue->ExecuteCommandLists(1, cmdLists);
+
+    FlushCommandQueue();
+
+    mViewport.TopLeftX = 0;
+    mViewport.TopLeftY = 0;
+    mViewport.Width = mWidth;
+    mViewport.Height = mHeight;
+    mViewport.MinDepth = 0.0f;
+    mViewport.MaxDepth = 1.0f;
+
+    mScissorRect = { 0, 0, mWidth, mHeight };
+}
+
+void DX12Renderer::FlushCommandQueue()
+{
+    mCurrentFence += 1;
+
+    // Add an instruction to the command queue to set a new fence point.  Because we
+    // are on the GPU timeline, the new fence point won't be set until the GPU finishes
+    // processing all the commands prior to this Signal().
+    HR(mCommandQueue->Signal(mFence, mCurrentFence));
+
+    if (mFence->GetCompletedValue() < mCurrentFence)
+    {
+        HANDLE eventHandle = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
+
+        mFence->SetEventOnCompletion(mCurrentFence, eventHandle);
+
+        WaitForSingleObject(eventHandle, INFINITE);
+        CloseHandle(eventHandle);
     }
 }
