@@ -45,9 +45,15 @@ Status DX12Renderer::Resize(int width, int height)
     {
         mWidth = width;
         mHeight = height;
-        /*
+
         FlushCommandQueue();
         mCommandList->Reset(mCommandAllocator.Get(), nullptr);
+
+        for (int i = 0; i < NUM_BACK_BUFFER; ++i)
+        {
+            mSwapChainBuffers[i].Reset();
+        }
+        mDepthStencilBuffer.Reset();
 
         HR(mSwapChain->ResizeBuffers(NUM_BACK_BUFFER, mWidth, mHeight,
                                      BACK_BUFFER_FORMAT,
@@ -55,7 +61,6 @@ Status DX12Renderer::Resize(int width, int height)
 
         CreateBackBufferRenderTargets();
         CreateDepthStencilBuffer();
-        */
     }
     return Status::OK;
 }
@@ -236,11 +241,6 @@ void DX12Renderer::CreateDescriptorHeaps(ID3D12Device* device)
 
 void DX12Renderer::CreateBackBufferRenderTargets()
 {
-    for (int i = 0; i < NUM_BACK_BUFFER; ++i)
-    {
-        mSwapChainBuffers[i].Reset();
-    }
-
     CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHeapHandle(mRtvHeap->GetCPUDescriptorHandleForHeapStart());
     for (int i = 0; i < NUM_BACK_BUFFER; ++i)
     {
@@ -255,7 +255,7 @@ void DX12Renderer::CreateBackBufferRenderTargets()
 
 void DX12Renderer::CreateDepthStencilBuffer()
 {
-    mDepthStencilBuffer.Reset();
+    assert(mDepthStencilBuffer == nullptr);
 
     D3D12_RESOURCE_DESC d;
     d.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
