@@ -9,6 +9,7 @@
 #pragma comment(lib, "dxgi.lib")
 
 #define BACK_BUFFER_FORMAT DXGI_FORMAT_R8G8B8A8_UNORM
+#define NUM_BACK_BUFFER 2
 
 DX12Renderer::DX12Renderer()
 {
@@ -30,6 +31,31 @@ Status DX12Renderer::Init(HWND hWnd, int width, int height)
 #else
     InitD3DCatchException(hWnd, width, height);
 #endif
+    return Status::OK;
+}
+
+Status DX12Renderer::Resize(int width, int height)
+{
+    assert(mDxgiFactory);
+    assert(mDevice);
+    assert(mSwapChain);
+    assert(mCommandAllocator);
+
+    if (mWidth != width || mHeight != height)
+    {
+        mWidth = width;
+        mHeight = height;
+
+        FlushCommandQueue();
+        mCommandList->Reset(mCommandAllocator.Get(), nullptr);
+
+        HR(mSwapChain->ResizeBuffers(NUM_BACK_BUFFER, mWidth, mHeight,
+                                     BACK_BUFFER_FORMAT,
+                                     DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH));
+
+        CreateBackBufferRenderTargets();
+        CreateDepthStencilBuffer();
+    }
     return Status::OK;
 }
 
@@ -92,9 +118,6 @@ Status DX12Renderer::InitD3D(HWND hWnd, int width, int height)
     CreateSwapChain(hWnd, width, height);
     CreateDescriptorHeaps(device);
 
-    CreateBackBufferRenderTargets();
-    CreateDepthStencilBuffer();
-
     return Status::OK;
 }
 
@@ -134,7 +157,7 @@ void DX12Renderer::CreateSwapChain(HWND hWnd, int width, int height)
     sd.SampleDesc.Count = 1;
     sd.SampleDesc.Quality = mMSAAQuality - 1;
     sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    sd.BufferCount = 2;
+    sd.BufferCount = NUM_BACK_BUFFER;
     sd.OutputWindow = hWnd;
     sd.Windowed = true;
     sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
@@ -150,7 +173,7 @@ void DX12Renderer::CreateSwapChain(HWND hWnd, int width, int height)
 void DX12Renderer::CreateDescriptorHeaps(ID3D12Device* device)
 {
     D3D12_DESCRIPTOR_HEAP_DESC rtvDesc;
-    rtvDesc.NumDescriptors = 2;
+    rtvDesc.NumDescriptors = NUM_BACK_BUFFER;
     rtvDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
     rtvDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     rtvDesc.NodeMask = 0;
@@ -166,8 +189,13 @@ void DX12Renderer::CreateDescriptorHeaps(ID3D12Device* device)
 
 void DX12Renderer::CreateBackBufferRenderTargets()
 {
+    for (int i = 0; i < NUM_BACK_BUFFER; ++i)
+    {
+        mSwapChainBuffers[i].Reset();
+    }
+
     CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHeapHandle(mRtvHeap->GetCPUDescriptorHandleForHeapStart());
-    for (int i = 0; i < 2; ++i)
+    for (int i = 0; i < NUM_BACK_BUFFER; ++i)
     {
         HR(mSwapChain->GetBuffer(i, IID_PPV_ARGS(&mSwapChainBuffers[i])));
 
@@ -178,6 +206,8 @@ void DX12Renderer::CreateBackBufferRenderTargets()
 
 void DX12Renderer::CreateDepthStencilBuffer()
 {
+    mDepthStencilBuffer.Reset();
+
     D3D12_RESOURCE_DESC d;
     d.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
     d.Alignment = 0;
@@ -203,9 +233,6 @@ void DX12Renderer::CreateDepthStencilBuffer()
 
     D3D12_CPU_DESCRIPTOR_HANDLE handle = mDsvHeap->GetCPUDescriptorHandleForHeapStart();
     mDevice->CreateDepthStencilView(mDepthStencilBuffer.Get(), nullptr, handle); // nullptr only works when the buffer is not typeless
-
-
-    mCommandList->Reset(mCommandAllocator.Get(), nullptr);
 
     CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(mDepthStencilBuffer.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE);
     mCommandList->ResourceBarrier(1, &barrier);

@@ -10,6 +10,10 @@ public:
     ~DX12Renderer();
 
     Status Init(HWND, int width, int height);
+    Status Resize(int width, int height);
+
+    int GetWidth() { return mWidth; }
+    int GetHeight() { return mHeight; }
 
 private:
     Status InitD3D(HWND hWnd, int width, int height);

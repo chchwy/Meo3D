@@ -20,7 +20,7 @@ protected:
 private:
     std::unique_ptr<MeoEngine> mEngine;
 
-    D3DWidget* d3dwidget = nullptr;
+    D3DWidget* mDxWidget = nullptr;
     bool mEngineInitialized = false;
     Ui::MainWindow* ui = nullptr;
 };

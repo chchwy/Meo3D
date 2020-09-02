@@ -1,6 +1,9 @@
 #pragma once
 #include <QWidget>
 
+
+class MeoEngine;
+
 class D3DWidget : public QWidget
 {
     Q_OBJECT
@@ -10,7 +13,8 @@ public:
     ~D3DWidget() override;
 
     QPaintEngine* paintEngine() const override { return nullptr; }
-    void render();
+
+    void SetMeoEngine(MeoEngine*);
 
 protected:
     void paintEvent(QPaintEvent* event) override;
@@ -18,6 +22,8 @@ protected:
 
 private:
     void tick();
+
+    MeoEngine* mMeoEngine = nullptr;
 };
 
 

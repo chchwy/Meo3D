@@ -8,7 +8,8 @@ class MeoEngine
 public:
     MeoEngine();
 
-    void init(HWND, int width, int height);
+    void Init(HWND, int width, int height);
+    void Resize(int width, int height);
 
 private:
     std::unique_ptr<MeoRenderer> mRenderer;
