@@ -33,7 +33,10 @@ void D3DWidget::SetMeoEngine(MeoEngine* eg)
 
 void D3DWidget::paintEvent(QPaintEvent* event)
 {
-
+    if (mMeoEngine)
+    {
+        mMeoEngine->Draw();
+    }
 }
 
 void D3DWidget::resizeEvent(QResizeEvent* event)

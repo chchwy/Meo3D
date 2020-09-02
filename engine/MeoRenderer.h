@@ -14,7 +14,7 @@ public:
 
 	void init(HWND hWnd, int width, int height);
 	void Shutdown();
-    void Render();
+    void Draw();
     void Resize(int width, int height);
 
 private:

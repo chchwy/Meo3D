@@ -5,16 +5,23 @@
 
 MeoEngine::MeoEngine()
 {
-    //std::cout << "Engine!" << std::endl;
 }
 
 void MeoEngine::Init(HWND hWnd, int width, int height)
 {
     mRenderer = std::make_unique<MeoRenderer>();
     mRenderer->init(hWnd, width, height);
+    mInitialized = true;
 }
 
 void MeoEngine::Resize(int width, int height)
 {
-    mRenderer->Resize(width, height);
+    if (mInitialized)
+        mRenderer->Resize(width, height);
+}
+
+void MeoEngine::Draw()
+{
+    if (mInitialized)
+        mRenderer->Draw();
 }

@@ -11,6 +11,7 @@ public:
 
     Status Init(HWND, int width, int height);
     Status Resize(int width, int height);
+    Status Draw();
 
     int GetWidth() { return mWidth; }
     int GetHeight() { return mHeight; }
@@ -26,6 +27,10 @@ private:
     void CreateDepthStencilBuffer();
 
     void FlushCommandQueue();
+
+    ID3D12Resource* CurrentBackBuffer() const;
+    D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const;
+    D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const;
 
     ComPtr<IDXGIFactory> mDxgiFactory;
     ComPtr<ID3D12Device> mDevice;
@@ -53,4 +58,5 @@ private:
     UINT mCbvSrvUavDescSize = 0;
 
     UINT mCurrentFence = 0;
+    UINT mCurrBackBuffer = 0;
 };

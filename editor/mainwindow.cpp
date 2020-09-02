@@ -28,12 +28,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::showEvent(QShowEvent*)
 {
-    if (!mEngineInitialized)
+    if (!mEngine)
     {
         mEngine = std::make_unique<MeoEngine>();
         mEngine->Init((HWND)mDxWidget->winId(), mDxWidget->width(), mDxWidget->height());
         mDxWidget->SetMeoEngine(mEngine.get());
-        mEngineInitialized = true;
     }
 }
 

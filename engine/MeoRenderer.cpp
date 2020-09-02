@@ -26,8 +26,9 @@ void MeoRenderer::Shutdown()
 {
 }
 
-void MeoRenderer::Render()
+void MeoRenderer::Draw()
 {
+    mNativeRenderer->Draw();
 }
 
 void MeoRenderer::Resize(int width, int height)

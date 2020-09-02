@@ -45,7 +45,7 @@ Status DX12Renderer::Resize(int width, int height)
     {
         mWidth = width;
         mHeight = height;
-
+        /*
         FlushCommandQueue();
         mCommandList->Reset(mCommandAllocator.Get(), nullptr);
 
@@ -55,7 +55,52 @@ Status DX12Renderer::Resize(int width, int height)
 
         CreateBackBufferRenderTargets();
         CreateDepthStencilBuffer();
+        */
     }
+    return Status::OK;
+}
+
+Status DX12Renderer::Draw()
+{
+    // We can only reset when the associated command lists have finished execution on the GPU.
+    HR(mCommandAllocator->Reset());
+
+    // A command list can be reset after it has been added to the command queue via ExecuteCommandList.
+    // Reusing the command list reuses memory.
+    HR(mCommandList->Reset(mCommandAllocator.Get(), nullptr));
+
+    mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+                                                                           D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+    // This needs to be reset whenever the command list is reset.
+    mCommandList->RSSetViewports(1, &mViewport);
+    mCommandList->RSSetScissorRects(1, &mScissorRect);
+
+    // Clear back buffer & depth stencil buffer
+    FLOAT red[]{ 1.0f, 0.0f, 0.0f, 1.0f };
+    mCommandList->ClearRenderTargetView(CurrentBackBufferView(), red, 0, nullptr);
+    mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+
+    // Specify the buffers we are going to render to.
+    mCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
+
+    // Indicate a state transition on the resource usage.
+    mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+                                                                           D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+
+    HR(mCommandList->Close()); // Done recording commands.
+
+    // Execute command list
+    ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
+    mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+    HR(mSwapChain->Present(0, 0));
+    mCurrBackBuffer = (mCurrBackBuffer + 1) % NUM_BACK_BUFFER;
+
+    // Wait until frame commands are complete.
+    // This waiting is inefficient and is done for simplicity.
+    // Later we will show how to organize our rendering code so we do not have to wait per frame.
+    FlushCommandQueue();
+
     return Status::OK;
 }
 
@@ -117,6 +162,8 @@ Status DX12Renderer::InitD3D(HWND hWnd, int width, int height)
     CreateCommandObjects(device);
     CreateSwapChain(hWnd, width, height);
     CreateDescriptorHeaps(device);
+    CreateBackBufferRenderTargets();
+    CreateDepthStencilBuffer();
 
     return Status::OK;
 }
@@ -202,6 +249,8 @@ void DX12Renderer::CreateBackBufferRenderTargets()
         mDevice->CreateRenderTargetView(mSwapChainBuffers[i].Get(), nullptr, rtvHeapHandle);
         rtvHeapHandle.Offset(1, mRtvDescSize);
     }
+
+    mCurrBackBuffer = 0;
 }
 
 void DX12Renderer::CreateDepthStencilBuffer()
@@ -226,10 +275,14 @@ void DX12Renderer::CreateDepthStencilBuffer()
     c.DepthStencil.Depth = 1.0f;
     c.DepthStencil.Stencil = 0;
 
+
+    ID3D12Resource* depthStencilBuffer = nullptr;
     CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_DEFAULT);
     HR(mDevice->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE,
                                         &d, D3D12_RESOURCE_STATE_COMMON, &c,
-                                        IID_PPV_ARGS(mDepthStencilBuffer.GetAddressOf())));
+                                        IID_PPV_ARGS(&depthStencilBuffer)));
+
+    mDepthStencilBuffer = depthStencilBuffer;
 
     D3D12_CPU_DESCRIPTOR_HANDLE handle = mDsvHeap->GetCPUDescriptorHandleForHeapStart();
     mDevice->CreateDepthStencilView(mDepthStencilBuffer.Get(), nullptr, handle); // nullptr only works when the buffer is not typeless
@@ -272,4 +325,22 @@ void DX12Renderer::FlushCommandQueue()
         WaitForSingleObject(eventHandle, INFINITE);
         CloseHandle(eventHandle);
     }
+}
+
+ID3D12Resource* DX12Renderer::CurrentBackBuffer() const
+{
+    return mSwapChainBuffers[mCurrBackBuffer].Get();
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE DX12Renderer::CurrentBackBufferView() const
+{
+    return CD3DX12_CPU_DESCRIPTOR_HANDLE(
+        mRtvHeap->GetCPUDescriptorHandleForHeapStart(),
+        mCurrBackBuffer,
+        mRtvDescSize);
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE DX12Renderer::DepthStencilView() const
+{
+    return mDsvHeap->GetCPUDescriptorHandleForHeapStart();
 }
