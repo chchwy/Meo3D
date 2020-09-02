@@ -9,14 +9,14 @@ public:
     DX12Renderer();
     ~DX12Renderer();
 
-    Status init(HWND, int width, int height);
+    Status Init(HWND, int width, int height);
 
 private:
-    Status initD3D(HWND hWnd, int width, int height);
-    Status initD3DCatchException(HWND hWnd, int width, int height);
+    Status InitD3D(HWND hWnd, int width, int height);
+    Status InitD3DCatchException(HWND hWnd, int width, int height);
 
     void CreateCommandObjects(ID3D12Device*);
-    void CreateSwapChain(ID3D12Device*, HWND hWnd, int width, int height);
+    void CreateSwapChain(HWND hWnd, int width, int height);
     void CreateDescriptorHeaps(ID3D12Device*);
     void CreateBackBufferRenderTargets();
     void CreateDepthStencilBuffer();
@@ -45,6 +45,8 @@ private:
     int mMSAAQuality = 0;
 
     UINT mRtvDescSize = 0;
+    UINT mDsvDescSize = 0;
+    UINT mCbvSrvUavDescSize = 0;
 
     UINT mCurrentFence = 0;
 };

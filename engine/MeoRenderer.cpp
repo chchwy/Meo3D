@@ -35,7 +35,7 @@ void MeoRenderer::init(HWND hWnd, int width, int height)
     m_hWnd = hWnd;
 
     mNativeRenderer = std::make_unique<DX12Renderer>();
-    mNativeRenderer->init(hWnd, width, height);
+    mNativeRenderer->Init(hWnd, width, height);
 
     /*
     Vector2U screenSize = GetWindowSize(hWnd);

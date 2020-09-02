@@ -18,7 +18,7 @@ DX12Renderer::~DX12Renderer()
 {
 }
 
-Status DX12Renderer::init(HWND hWnd, int width, int height)
+Status DX12Renderer::Init(HWND hWnd, int width, int height)
 {
     debugLog("Init Dx12 Renderer!");
 
@@ -26,18 +26,18 @@ Status DX12Renderer::init(HWND hWnd, int width, int height)
     mHeight = height;
 
 #ifdef _DEBUG
-    initD3D(hWnd, width, height);
+    InitD3D(hWnd, width, height);
 #else
-    initD3DCatchException(hWnd, width, height);
+    InitD3DCatchException(hWnd, width, height);
 #endif
     return Status::OK;
 }
 
-Status DX12Renderer::initD3DCatchException(HWND hWnd, int width, int height)
+Status DX12Renderer::InitD3DCatchException(HWND hWnd, int width, int height)
 {
     try
     {
-        return initD3D(hWnd, width, height);
+        return InitD3D(hWnd, width, height);
     }
     catch (const std::exception&)
     {
@@ -47,7 +47,7 @@ Status DX12Renderer::initD3DCatchException(HWND hWnd, int width, int height)
 }
 
 
-Status DX12Renderer::initD3D(HWND hWnd, int width, int height)
+Status DX12Renderer::InitD3D(HWND hWnd, int width, int height)
 {
 
 #ifdef ENABLE_DEBUG_LAYER
@@ -74,8 +74,8 @@ Status DX12Renderer::initD3D(HWND hWnd, int width, int height)
     mFence = fence;
 
     mRtvDescSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    UINT dsvDescSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-    UINT cbvSrvUavDescSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    mDsvDescSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+    mCbvSrvUavDescSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
     D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS msaaQualityLevels;
     msaaQualityLevels.Format = BACK_BUFFER_FORMAT;
@@ -89,10 +89,12 @@ Status DX12Renderer::initD3D(HWND hWnd, int width, int height)
     assert(mMSAAQuality > 0 && "Unexpected MSAA quality level.");
 
     CreateCommandObjects(device);
-    CreateSwapChain(device, hWnd, width, height);
+    CreateSwapChain(hWnd, width, height);
     CreateDescriptorHeaps(device);
+
     CreateBackBufferRenderTargets();
     CreateDepthStencilBuffer();
+
     return Status::OK;
 }
 
@@ -119,7 +121,7 @@ void DX12Renderer::CreateCommandObjects(ID3D12Device* device)
     commandList->Close();
 }
 
-void DX12Renderer::CreateSwapChain(ID3D12Device* device, HWND hWnd, int width, int height)
+void DX12Renderer::CreateSwapChain(HWND hWnd, int width, int height)
 {
     DXGI_SWAP_CHAIN_DESC sd = {};
     sd.BufferDesc.Width = width;
