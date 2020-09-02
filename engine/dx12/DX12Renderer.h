@@ -1,5 +1,6 @@
 #pragma once
 
+using Microsoft::WRL::ComPtr;
 struct ID3D12Device;
 
 class DX12Renderer
@@ -12,6 +13,8 @@ public:
 
 private:
     Status initD3D(HWND hWnd, int width, int height);
+    Status initD3DCatchException(HWND hWnd, int width, int height);
+
     void CreateCommandObjects(ID3D12Device*);
     void CreateSwapChain(ID3D12Device*, HWND hWnd, int width, int height);
     void CreateDescriptorHeaps(ID3D12Device*);
@@ -20,19 +23,19 @@ private:
 
     void FlushCommandQueue();
 
-    IDXGIFactory* mDxgiFactory;
-    ID3D12Device* mDevice;
-    ID3D12Fence* mFence;
-    ID3D12CommandQueue* mCommandQueue;
-    ID3D12GraphicsCommandList* mCommandList;
-    ID3D12CommandAllocator* mCommandAllocator;
-    IDXGISwapChain* mSwapChain;
+    ComPtr<IDXGIFactory> mDxgiFactory;
+    ComPtr<ID3D12Device> mDevice;
+    ComPtr<ID3D12Fence> mFence;
+    ComPtr<ID3D12CommandQueue> mCommandQueue;
+    ComPtr<ID3D12GraphicsCommandList> mCommandList;
+    ComPtr<ID3D12CommandAllocator> mCommandAllocator;
+    ComPtr<IDXGISwapChain> mSwapChain;
 
-    ID3D12DescriptorHeap* mRtvHeap;
-    ID3D12DescriptorHeap* mDsvHeap;
+    ComPtr<ID3D12DescriptorHeap> mRtvHeap;
+    ComPtr<ID3D12DescriptorHeap> mDsvHeap;
 
-    ID3D12Resource* mSwapChainBuffers[2];
-    ID3D12Resource* mDepthStencilBuffer;
+    ComPtr<ID3D12Resource> mSwapChainBuffers[2];
+    ComPtr<ID3D12Resource> mDepthStencilBuffer;
 
     D3D12_VIEWPORT mViewport;
     D3D12_RECT mScissorRect;

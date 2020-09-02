@@ -8,7 +8,6 @@
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
 
-
 #define BACK_BUFFER_FORMAT DXGI_FORMAT_R8G8B8A8_UNORM
 
 DX12Renderer::DX12Renderer()
@@ -17,16 +16,6 @@ DX12Renderer::DX12Renderer()
 
 DX12Renderer::~DX12Renderer()
 {
-    mDxgiFactory->Release();
-    mDevice->Release();
-    mFence->Release();
-    mCommandQueue->Release();
-    mCommandList->Release();
-    mCommandAllocator->Release();
-    mSwapChain->Release();
-
-    mSwapChainBuffers[0]->Release();
-    mSwapChainBuffers[1]->Release();
 }
 
 Status DX12Renderer::init(HWND hWnd, int width, int height)
@@ -35,16 +24,26 @@ Status DX12Renderer::init(HWND hWnd, int width, int height)
 
     mWidth = width;
     mHeight = height;
-    //try
-    //{
-        initD3D(hWnd, width, height);
-    //}
-    //catch (const std::exception&)
-    //{
-    //    assert(false);
-    //    return Status::FAIL;
-    //}
+
+#ifdef _DEBUG
+    initD3D(hWnd, width, height);
+#else
+    initD3DCatchException(hWnd, width, height);
+#endif
     return Status::OK;
+}
+
+Status DX12Renderer::initD3DCatchException(HWND hWnd, int width, int height)
+{
+    try
+    {
+        return initD3D(hWnd, width, height);
+    }
+    catch (const std::exception&)
+    {
+        assert(false);
+        return Status::FAIL;
+    }
 }
 
 
@@ -57,17 +56,17 @@ Status DX12Renderer::initD3D(HWND hWnd, int width, int height)
     debugController->EnableDebugLayer();
 #endif
 
-    IDXGIFactory4* dxgiFactory;
+    IDXGIFactory4* dxgiFactory = nullptr;
     HRESULT hr = CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory));
     if (FAILED(hr))
     {
         return Status::FAIL;
     }
 
-    ID3D12Device* device;
+    ID3D12Device* device = nullptr;
     hr = D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&device));
 
-    ID3D12Fence* fence;
+    ID3D12Fence* fence = nullptr;
     hr = device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 
     mDxgiFactory = dxgiFactory;
@@ -139,8 +138,9 @@ void DX12Renderer::CreateSwapChain(ID3D12Device* device, HWND hWnd, int width, i
     sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
     sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
-    IDXGISwapChain* swapChain;
-    HR(mDxgiFactory->CreateSwapChain(mCommandQueue, &sd, &swapChain));
+    IDXGISwapChain* swapChain = nullptr;
+    // First parameter said it's a device, but in Dx12 you need to pass a CommandQueue
+    HR(mDxgiFactory->CreateSwapChain(mCommandQueue.Get(), &sd, &swapChain));
 
     mSwapChain = swapChain;
 }
@@ -169,7 +169,7 @@ void DX12Renderer::CreateBackBufferRenderTargets()
     {
         HR(mSwapChain->GetBuffer(i, IID_PPV_ARGS(&mSwapChainBuffers[i])));
 
-        mDevice->CreateRenderTargetView(mSwapChainBuffers[i], nullptr, rtvHeapHandle);
+        mDevice->CreateRenderTargetView(mSwapChainBuffers[i].Get(), nullptr, rtvHeapHandle);
         rtvHeapHandle.Offset(1, mRtvDescSize);
     }
 }
@@ -197,28 +197,28 @@ void DX12Renderer::CreateDepthStencilBuffer()
     CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_DEFAULT);
     HR(mDevice->CreateCommittedResource(&heapProp, D3D12_HEAP_FLAG_NONE,
                                         &d, D3D12_RESOURCE_STATE_COMMON, &c,
-                                        IID_PPV_ARGS(&mDepthStencilBuffer)));
+                                        IID_PPV_ARGS(mDepthStencilBuffer.GetAddressOf())));
 
     D3D12_CPU_DESCRIPTOR_HANDLE handle = mDsvHeap->GetCPUDescriptorHandleForHeapStart();
-    mDevice->CreateDepthStencilView(mDepthStencilBuffer, nullptr, handle); // nullptr only works when the buffer is not typeless
+    mDevice->CreateDepthStencilView(mDepthStencilBuffer.Get(), nullptr, handle); // nullptr only works when the buffer is not typeless
 
 
-    mCommandList->Reset(mCommandAllocator, nullptr);
+    mCommandList->Reset(mCommandAllocator.Get(), nullptr);
 
-    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(mDepthStencilBuffer, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(mDepthStencilBuffer.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE);
     mCommandList->ResourceBarrier(1, &barrier);
 
     mCommandList->Close();
 
-    ID3D12CommandList* cmdLists[] = { mCommandList };
+    ID3D12CommandList* cmdLists[] = { mCommandList.Get() };
     mCommandQueue->ExecuteCommandLists(1, cmdLists);
 
     FlushCommandQueue();
 
     mViewport.TopLeftX = 0;
     mViewport.TopLeftY = 0;
-    mViewport.Width = mWidth;
-    mViewport.Height = mHeight;
+    mViewport.Width = FLOAT(mWidth);
+    mViewport.Height = FLOAT(mHeight);
     mViewport.MinDepth = 0.0f;
     mViewport.MaxDepth = 1.0f;
 
@@ -232,7 +232,7 @@ void DX12Renderer::FlushCommandQueue()
     // Add an instruction to the command queue to set a new fence point.  Because we
     // are on the GPU timeline, the new fence point won't be set until the GPU finishes
     // processing all the commands prior to this Signal().
-    HR(mCommandQueue->Signal(mFence, mCurrentFence));
+    HR(mCommandQueue->Signal(mFence.Get(), mCurrentFence));
 
     if (mFence->GetCompletedValue() < mCurrentFence)
     {

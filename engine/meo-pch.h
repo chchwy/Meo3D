@@ -1,10 +1,11 @@
 #ifndef MEOPCH_H
 #define MEOPCH_H
 
-// Windows Header Files:
+// Windows Header Files
 #define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 #define NOMINMAX
 #include <windows.h>
+#include <wrl.h>
 
 // Cpp headers
 #include <string>
